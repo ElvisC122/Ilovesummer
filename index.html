@@ -14,7 +14,7 @@
         }
         h1 {
             text-align: center;
-            color: #c8245f;
+            color: #8ae1fc;
             font-size: 40px;
         }
         .menu-category {
@@ -28,18 +28,36 @@
         .menu-item {
             margin: 10px 0;
         }
-        button {
-            background-color: #3498db;
-            color: white;
+        /* 基本按鈕樣式 */
+        .button {
             padding: 12px 24px;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            border-radius: 25px;
             font-size: 18px;
-            transition: background-color 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        button:hover {
-            background-color: #2980b9;
+        /* 漸變背景色 */
+        .button-gradient {
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        /* 添加陰影效果 */
+        .button-shadow {
+            background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        /* 懸停效果 */
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        /* 點擊效果 */
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         #response {
             margin-top: 20px;
@@ -76,8 +94,8 @@
 
     <!-- 提交訂單按鈕 -->
     <div style="text-align: center; margin-top: 20px;">
-        <button onclick="submitOrder()">提交訂單</button>
-        <button onclick="sendOrder()">發送選擇</button>
+        <button class="button button-gradient" onclick="submitOrder()">提交訂單</button>
+        <button class="button button-shadow" onclick="sendOrder()">發送選擇</button>
     </div>
     
     <div id="response"></div>
