@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>棠棠揀嘢食</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #c8245f;
+            color: #333;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 40px;
+        }
+        .menu-category {
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #ffffff;
+        }
+        .menu-item {
+            margin: 5px 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #response {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>棠棠揀嘢食</h1>
+
+    <div class="menu-category">
+        <h2>主菜 (可選擇多個)</h2>
+        <div class="menu-item"><input type="checkbox" id="dishA" name="mainDish" value="三文魚魚魚"> <label for="dishA">三文魚魚魚</label></div>
+        <div class="menu-item"><input type="checkbox" id="dishB" name="mainDish" value="傻仔牛柳粒"> <label for="dishB">傻仔牛柳粒</label></div>
+        <div class="menu-item"><input type="checkbox" id="dishC" name="mainDish" value="炸雞仔"> <label for="dishC">炸雞仔</label></div>
+    </div>
+
+    <div class="menu-category">
+        <h2>麵類</h2>
+        <div class="menu-item"><input type="checkbox" id="toppingC" name="topping" value="香椒麵"> <label for="toppingC">香椒麵</label></div>
+        <div class="menu-item"><input type="checkbox" id="toppingD" name="topping" value="芝士麵"> <label for="toppingD">芝士麵</label></div>
+        <div class="menu-item"><input type="checkbox" id="toppingE" name="topping" value="辛辣麵"> <label for="toppingE">辛辣麵</label></div>
+    </div>
+
+    <div class="menu-category">
+        <h2>飲品 (可選擇多個)</h2>
+        <div class="menu-item"><input type="checkbox" id="drinkF" name="drink" value="果然系"> <label for="drinkF">果然系</label></div>
+        <div class="menu-item"><input type="checkbox" id="drinkG" name="drink" value="檸檬可樂"> <label for="drinkG">檸檬可樂</label></div>
+        <div class="menu-item"><input type="checkbox" id="drinkH" name="drink" value="水"> <label for="drinkH">水</label></div>
+    </div>
+
+    <!-- 提交訂單按鈕 -->
+    <button onclick="submitOrder()">提交訂單</button>
+    <!-- 發送按鈕 -->
+    <button onclick="sendOrder()">發送選擇</button>
+    
+    <div id="response"></div>
+
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        (function() {
+            emailjs.init('vn3GR_CXbh1QFBx3G'); // 替換 'YOUR_USER_ID' 為您實際的 EmailJS 用戶ID
+        })();
+
+        function submitOrder() {
+            let mainDishes = [];
+            let toppings = [];
+            let drinks = [];
+
+            // 獲取主菜選擇
+            const mainDishCheckboxes = document.querySelectorAll('input[name="mainDish"]:checked');
+            mainDishCheckboxes.forEach((checkbox) => {
+                mainDishes.push(checkbox.value);
+            });
+
+            // 獲取麵類選擇
+            const toppingCheckboxes = document.querySelectorAll('input[name="topping"]:checked');
+            toppingCheckboxes.forEach((checkbox) => {
+                toppings.push(checkbox.value);
+            });
+
+            // 獲取飲品選擇
+            const drinkCheckboxes = document.querySelectorAll('input[name="drink"]:checked');
+            drinkCheckboxes.forEach((checkbox) => {
+                drinks.push(checkbox.value);
+            });
+
+            // 構建訂單信息
+            const orderInfo = {
+                mainDishes: mainDishes.join(", "),
+                toppings: toppings.join(", "),
+                drinks: drinks.join(", ")
+            };
+
+            // 在這裡顯示訂單信息（或發送到伺服器）
+            alert("您的訂單已提交！\n主菜: " + orderInfo.mainDishes + "\n配料: " + orderInfo.toppings + "\n飲品: " + orderInfo.drinks);
+        }
+
+        async function sendOrder() {
+            let mainDishes = [];
+            let toppings = [];
+            let drinks = [];
+
+            // 獲取主菜選擇
+            const mainDishCheckboxes = document.querySelectorAll('input[name="mainDish"]:checked');
+            mainDishCheckboxes.forEach((checkbox) => {
+                mainDishes.push(checkbox.value);
+            });
+
+            // 獲取麵類選擇
+            const toppingCheckboxes = document.querySelectorAll('input[name="topping"]:checked');
+            toppingCheckboxes.forEach((checkbox) => {
+                toppings.push(checkbox.value);
+            });
+
+            // 獲取飲品選擇
+            const drinkCheckboxes = document.querySelectorAll('input[name="drink"]:checked');
+            drinkCheckboxes.forEach((checkbox) => {
+                drinks.push(checkbox.value);
+            });
+
+            // 構建訂單信息
+            const orderInfo = {
+                mainDishes: mainDishes.join(", "),
+                toppings: toppings.join(", "),
+                drinks: drinks.join(", ")
+            };
+
+            // 發送訂單信息到 EmailJS
+            emailjs.send('service_4ko4syl', 'template_msmjd0l', {
+                user_name: '客戶', // 您可以添加一個字段來捕獲用戶的名稱
+                user_email: 'customer@example.com', // 您可以添加一個字段來捕獲用戶的郵箱
+                mainDishes: orderInfo.mainDishes,
+                toppings: orderInfo.toppings,
+                drinks: orderInfo.drinks
+            })
+            .then((response) => {
+                document.getElementById('response').innerText = '選擇已發送到你的郵箱！';
+            }, (error) => {
+                document.getElementById('response').innerText = '發送郵件時出錯。';
+            });
+        }
+    </script>
+
+</body>
+</html>
