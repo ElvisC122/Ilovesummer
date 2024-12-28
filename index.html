@@ -76,12 +76,17 @@
     
     <div id="response"></div>
 
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
-        (function() {
-            emailjs.init('vn3GR_CXbh1QFBx3G'); // 替換 'YOUR_USER_ID' 為您實際的 EmailJS 用戶ID
+    <!-- 引用最新版本的 EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init({
+                publicKey: "vn3GR_CXbh1QFBx3G", // 替換為您的 EmailJS 公鑰
+            });
         })();
+    </script>
 
+    <script>
         function submitOrder() {
             let mainDishes = [];
             let toppings = [];
@@ -117,49 +122,49 @@
         }
 
         async function sendOrder() {
-    let mainDishes = [];
-    let toppings = [];
-    let drinks = [];
+            let mainDishes = [];
+            let toppings = [];
+            let drinks = [];
 
-    // 獲取主菜選擇
-    const mainDishCheckboxes = document.querySelectorAll('input[name="mainDish"]:checked');
-    mainDishCheckboxes.forEach((checkbox) => {
-        mainDishes.push(checkbox.value);
-    });
+            // 獲取主菜選擇
+            const mainDishCheckboxes = document.querySelectorAll('input[name="mainDish"]:checked');
+            mainDishCheckboxes.forEach((checkbox) => {
+                mainDishes.push(checkbox.value);
+            });
 
-    // 獲取麵類選擇
-    const toppingCheckboxes = document.querySelectorAll('input[name="topping"]:checked');
-    toppingCheckboxes.forEach((checkbox) => {
-        toppings.push(checkbox.value);
-    });
+            // 獲取麵類選擇
+            const toppingCheckboxes = document.querySelectorAll('input[name="topping"]:checked');
+            toppingCheckboxes.forEach((checkbox) => {
+                toppings.push(checkbox.value);
+            });
 
-    // 獲取飲品選擇
-    const drinkCheckboxes = document.querySelectorAll('input[name="drink"]:checked');
-    drinkCheckboxes.forEach((checkbox) => {
-        drinks.push(checkbox.value);
-    });
+            // 獲取飲品選擇
+            const drinkCheckboxes = document.querySelectorAll('input[name="drink"]:checked');
+            drinkCheckboxes.forEach((checkbox) => {
+                drinks.push(checkbox.value);
+            });
 
-    // 構建訂單信息
-    const orderInfo = {
-        mainDishes: mainDishes.join(", "),
-        toppings: toppings.join(", "),
-        drinks: drinks.join(", ")
-    };
+            // 構建訂單信息
+            const orderInfo = {
+                mainDishes: mainDishes.join(", "),
+                toppings: toppings.join(", "),
+                drinks: drinks.join(", ")
+            };
 
-    // 發送訂單信息到 EmailJS
-    emailjs.send('service_4ko4syl', 'template_msmjd0l', {
-        user_name: '客戶',
-        user_email: 'customer@example.com',
-        mainDishes: orderInfo.mainDishes,
-        toppings: orderInfo.toppings,
-        drinks: orderInfo.drinks
-    })
-    .then((response) => {
-        document.getElementById('response').innerText = '選擇已發送到你的郵箱！';
-    }, (error) => {
-        document.getElementById('response').innerText = '發送郵件時出錯。';
-        console.error('EmailJS Error:', error);
-    });
+            // 發送訂單信息到 EmailJS
+            emailjs.send('service_4ko4syl', 'template_msmjd0l', {
+                user_name: '客戶',
+                user_email: 'customer@example.com',
+                mainDishes: orderInfo.mainDishes,
+                toppings: orderInfo.toppings,
+                drinks: orderInfo.drinks
+            })
+            .then((response) => {
+                document.getElementById('response').innerText = '選擇已發送到你的郵箱！';
+            }, (error) => {
+                document.getElementById('response').innerText = '發送郵件時出錯。';
+                console.error('EmailJS Error:', error); // 添加此行以在控制台中顯示錯誤詳情
+            });
         }
     </script>
 
