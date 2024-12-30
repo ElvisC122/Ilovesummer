@@ -16,6 +16,10 @@
             text-align: center;
             color: #8ae1fc;
             font-size: 40px;
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
         }
         .menu-category {
             margin: 20px 0;
@@ -26,6 +30,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .menu-item {
+            display: inline-block;
             margin: 10px 0;
             padding: 10px;
             border-radius: 10px;
@@ -34,21 +39,25 @@
             transition: all 0.3s ease;
             cursor: pointer;
         }
+        .menu-item label {
+            padding: 5px 10px;
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
         .menu-item input[type="checkbox"] {
             display: none;
         }
-        .menu-item label {
-            cursor: pointer;
-        }
-        .menu-item:hover {
+        .menu-item:hover label {
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
         }
-        .menu-item:active {
+        .menu-item:active label {
             transform: translateY(0);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .menu-item.active {
+        .menu-item.active label {
             background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
         }
         /* 基本按鈕樣式 */
@@ -87,6 +96,17 @@
             font-weight: bold;
             text-align: center;
             color: #27ae60;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .response-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .response-error {
+            background-color: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
@@ -174,7 +194,9 @@
             };
 
             // 在這裡顯示訂單信息（或發送到伺服器）
-            alert("您的訂單已提交！\n主菜: " + orderInfo.mainDishes + "\n配料: " + orderInfo.toppings + "\n飲品: " + orderInfo.drinks);
+            const responseDiv = document.getElementById('response');
+            responseDiv.className = 'response-success';
+            responseDiv.innerText = "您的訂單已提交！\n主菜: " + orderInfo.mainDishes + "\n配料: " + orderInfo.toppings + "\n飲品: " + orderInfo.drinks;
         }
 
         async function sendOrder() {
@@ -216,9 +238,13 @@
                 drinks: orderInfo.drinks
             })
             .then((response) => {
-                document.getElementById('response').innerText = '選擇已發送到你的郵箱！';
+                const responseDiv = document.getElementById('response');
+                responseDiv.className = 'response-success';
+                responseDiv.innerText = '選擇已發送到你的郵箱！';
             }, (error) => {
-                document.getElementById('response').innerText = '發送郵件時出錯。';
+                const responseDiv = document.getElementById('response');
+                responseDiv.className = 'response-error';
+                responseDiv.innerText = '發送郵件時出錯。';
                 console.error('EmailJS Error:', error); // 添加此行以在控制台中顯示錯誤詳情
             });
         }
