@@ -30,7 +30,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         .menu-item {
-            display: inline-block;
             margin: 10px 0;
             padding: 10px;
             border-radius: 10px;
@@ -38,14 +37,14 @@
             color: white;
             transition: all 0.3s ease;
             cursor: pointer;
+            display: block; /* Ensuring each item is a block element */
         }
         .menu-item input[type="checkbox"] {
             display: none;
         }
         .menu-item label {
-            display: inline-block;
+            display: block; /* Ensuring each label is a block element */
             padding: 5px 10px;
-            width: 100%;
             background: linear-gradient(45deg, #ff6b6b, #f06595);
             border-radius: 5px;
             transition: all 0.3s ease;
