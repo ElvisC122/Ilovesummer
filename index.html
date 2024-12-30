@@ -69,6 +69,37 @@
             background: #f7f7f7;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+        /* Default button styles */
+        .button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        /* Gradient background */
+        .button-gradient {
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        /* Shadow effect */
+        .button-shadow {
+            background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        /* Hover effect */
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        /* Active (click) effect */
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
         #response {
             margin-top: 20px;
             font-weight: bold;
