@@ -27,6 +27,29 @@
         }
         .menu-item {
             margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .menu-item input[type="checkbox"] {
+            display: none;
+        }
+        .menu-item label {
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        .menu-item:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .menu-item.active {
+            background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
         }
         /* 基本按鈕樣式 */
         .button {
@@ -76,6 +99,9 @@
         <div class="menu-item"><input type="checkbox" id="dishA" name="mainDish" value="比目魚魚魚"> <label for="dishA">比目魚魚魚</label></div>
         <div class="menu-item"><input type="checkbox" id="dishB" name="mainDish" value="傻仔絲"> <label for="dishB">傻仔絲</label></div>
         <div class="menu-item"><input type="checkbox" id="dishC" name="mainDish" value="雞翼仔"> <label for="dishC">雞翼仔</label></div>
+        <div class="menu-item"><input type="checkbox" id="dishD" name="mainDish" value="紅燒肉"> <label for="dishD">紅燒肉</label></div>
+        <div class="menu-item"><input type="checkbox" id="dishE" name="mainDish" value="魚香肉絲"> <label for="dishE">魚香肉絲</label></div>
+        <div class="menu-item"><input type="checkbox" id="dishF" name="mainDish" value="青椒肉絲"> <label for="dishF">青椒肉絲</label></div>
     </div>
 
     <div class="menu-category">
@@ -111,6 +137,12 @@
     </script>
 
     <script>
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+
         function submitOrder() {
             let mainDishes = [];
             let toppings = [];
