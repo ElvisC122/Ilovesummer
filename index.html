@@ -12,6 +12,29 @@
             color: #333;
             padding: 20px;
         }
+        nav {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            background: #333;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        nav ul li a:hover {
+            background: #555;
+        }
         h1 {
             text-align: center;
             color: #87CEEB;
@@ -69,7 +92,6 @@
             background: #f7f7f7;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        /* Default button styles */
         .button {
             padding: 12px 24px;
             border: none;
@@ -78,24 +100,20 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        /* Gradient background */
         .button-gradient {
             background: linear-gradient(45deg, #ff6b6b, #f06595);
             color: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        /* Shadow effect */
         .button-shadow {
             background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
             color: white;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-        /* Hover effect */
         .button:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
         }
-        /* Active (click) effect */
         .button:active {
             transform: translateY(0);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -120,10 +138,16 @@
     </style>
 </head>
 <body>
-
+    <nav>
+        <ul>
+            <li><a href="#main-dishes">主菜</a></li>
+            <li><a href="#toppings">配料</a></li>
+            <li><a href="#drinks">飲品</a></li>
+            <li><a href="#contact">联系</a></li>
+        </ul>
+    </nav>
     <h1>棠棠揀嘢食</h1>
-
-    <div class="menu-category">
+    <div class="menu-category" id="main-dishes">
         <h2>揀咩餸 (可選擇多個)</h2>
         <div class="menu-item"><input type="checkbox" id="dishA" name="mainDish" value="比目魚魚魚"><label for="dishA">比目魚魚魚</label></div>
         <div class="menu-item"><input type="checkbox" id="dishB" name="mainDish" value="三文魚魚魚"><label for="dishB">三文魚魚魚</label></div>
@@ -132,15 +156,12 @@
         <div class="menu-item"><input type="checkbox" id="dishE" name="mainDish" value="傻條"><label for="dishE">傻條</label></div>
         <div class="menu-item"><input type="checkbox" id="dishF" name="mainDish" value="帶子煙肉"><label for="dishF">帶子煙肉</label></div>
     </div>
-
-    <div class="menu-category">
+    <div class="menu-category" id="toppings">
         <h2>主食</h2>
         <div class="menu-item"><input type="checkbox" id="toppingC" name="topping" value="飯飯飯"><label for="toppingC">飯飯飯</label></div>
         <div class="menu-item"><input type="checkbox" id="toppingD" name="topping" value="公仔麵"><label for="toppingD">公仔麵</label></div>
         <div class="menu-item"><input type="checkbox" id="toppingE" name="topping" value="Macroni"><label for="toppingE">Macroni</label></div>
     </div>
-
-    <!-- Flavour selection for 公仔麵 -->
     <div class="flavor-options" id="flavorOptions">
         <label for="flavor">選擇公仔麵口味:</label>
         <select id="flavor" name="flavor">
@@ -149,31 +170,23 @@
             <option value="香椒">香椒</option>
         </select>
     </div>
-
-    <div class="menu-category">
+    <div class="menu-category" id="drinks">
         <h2>飲品 (可選擇多個)</h2>
         <div class="menu-item"><input type="checkbox" id="drinkF" name="drink" value="果然系"><label for="drinkF">果然系</label></div>
         <div class="menu-item"><input type="checkbox" id="drinkG" name="drink" value="檸檬可樂"><label for="drinkG">檸檬可樂</label></div>
         <div class="menu-item"><input type="checkbox" id="drinkH" name="drink" value="水"><label for="drinkH">水</label></div>
     </div>
-
     <div style="text-align: center; margin-top: 20px;">
         <button class="button button-gradient" onclick="submitOrder()">提交訂單</button>
         <button class="button button-shadow" onclick="sendOrder()">發送選擇</button>
     </div>
-    
     <div id="response"></div>
-
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function(){
-            emailjs.init({
-                publicKey: "vn3GR_CXbh1QFBx3G",
-            });
+            emailjs.init({ publicKey: "vn3GR_CXbh1QFBx3G" });
         })();
-    </script>
 
-    <script>
         document.querySelectorAll('.menu-item').forEach(item => {
             item.addEventListener('click', () => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
@@ -185,19 +198,28 @@
             });
         });
 
+        function validateForm() {
+            const mainDishCheckboxes = document.querySelectorAll('input[name="mainDish"]:checked');
+            if (mainDishCheckboxes.length === 0) {
+                alert('请选择至少一个主菜。');
+                return false;
+            }
+            return true;
+        }
+
         function submitOrder() {
+            if (!validateForm()) return;
+
             let mainDishes = [];
             let toppings = [];
             let drinks = [];
             let flavor = '';
 
-            // 獲取主菜選擇
             const mainDishCheckboxes = document.querySelectorAll('input[name="mainDish"]:checked');
             mainDishCheckboxes.forEach((checkbox) => {
                 mainDishes.push(checkbox.value);
             });
 
-            // 獲取麵類選擇
             const toppingCheckboxes = document.querySelectorAll('input[name="topping"]:checked');
             toppingCheckboxes.forEach((checkbox) => {
                 toppings.push(checkbox.value);
@@ -206,13 +228,11 @@
                 }
             });
 
-            // 獲取飲品選擇
             const drinkCheckboxes = document.querySelectorAll('input[name="drink"]:checked');
             drinkCheckboxes.forEach((checkbox) => {
                 drinks.push(checkbox.value);
             });
 
-            // 構建訂單信息
             const orderInfo = {
                 mainDishes: mainDishes.join(", "),
                 toppings: toppings.join(", "),
@@ -220,25 +240,24 @@
                 flavor: flavor
             };
 
-            // 在這裡顯示訂單信息（或發送到伺服器）
             const responseDiv = document.getElementById('response');
             responseDiv.className = 'response-success';
             responseDiv.innerText = "您的訂單已提交！\n主菜: " + orderInfo.mainDishes + "\n配料: " + orderInfo.toppings + "\n飲品: " + orderInfo.drinks + "\n公仔麵口味: " + orderInfo.flavor;
         }
 
         async function sendOrder() {
+            if (!validateForm()) return;
+
             let mainDishes = [];
             let toppings = [];
             let drinks = [];
             let flavor = '';
 
-            // 獲取主菜選擇
             const mainDishCheckboxes = document.querySelectorAll('input[name="mainDish"]:checked');
             mainDishCheckboxes.forEach((checkbox) => {
                 mainDishes.push(checkbox.value);
             });
 
-            // 獲取麵類選擇
             const toppingCheckboxes = document.querySelectorAll('input[name="topping"]:checked');
             toppingCheckboxes.forEach((checkbox) => {
                 toppings.push(checkbox.value);
@@ -247,13 +266,11 @@
                 }
             });
 
-            // 獲取飲品選擇
             const drinkCheckboxes = document.querySelectorAll('input[name="drink"]:checked');
             drinkCheckboxes.forEach((checkbox) => {
                 drinks.push(checkbox.value);
             });
 
-            // 構建訂單信息
             const orderInfo = {
                 mainDishes: mainDishes.join(", "),
                 toppings: toppings.join(", "),
@@ -261,7 +278,6 @@
                 flavor: flavor
             };
 
-            // 發送訂單信息到 EmailJS
             emailjs.send('service_4ko4syl', 'template_msmjd0l', {
                 user_name: '客戶',
                 user_email: 'customer@example.com',
@@ -282,6 +298,5 @@
             });
         }
     </script>
-
 </body>
 </html>
