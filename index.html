@@ -56,6 +56,7 @@
             border-radius: 10px;
             background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
         .menu-item {
             margin: 10px 0;
@@ -88,6 +89,21 @@
         }
         .menu-item input[type="checkbox"]:checked + label {
             background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59);
+        }
+        .menu-item input[type="checkbox"]#toppingD:checked + label {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
         .flavor-options {
             display: none;
@@ -146,10 +162,9 @@
 <body>
     <nav>
         <ul>
-            <li><a href="#main-dishes">主菜</a></li>
-            <li><a href="#toppings">配料</a></li>
+            <li><a href="#main-dishes">揀咩餸</a></li>
+            <li><a href="#toppings">主食</a></li>
             <li><a href="#drinks">飲品</a></li>
-            <li><a href="#contact">联系</a></li>
         </ul>
     </nav>
     <h1>棠棠揀嘢食</h1>
@@ -174,6 +189,10 @@
             <option value="原味">原味</option>
             <option value="黑蒜">黑蒜</option>
             <option value="香椒">香椒</option>
+            <option value="東京醬油">東京醬油</option>
+            <option value="極辛豬骨">極辛豬骨</option>
+            <option value="北海道味噌">北海道味噌</option>
+            <option value="九州豬骨">九州豬骨</option>
         </select>
     </div>
     <div class="menu-category" id="drinks">
