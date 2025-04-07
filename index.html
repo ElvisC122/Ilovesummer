@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>Mako Protein Tracker</title>
+    <title>戰士蛋白質進化系統</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
         
@@ -108,64 +108,105 @@
             padding: 5px 10px;
             font-size: 0.8em;
         }
+
+        /* 新增角色樣式 */
+        .character-container {
+            position: relative;
+            margin: 20px auto;
+            width: 200px;
+            border: 2px solid var(--ff-gold);
+            border-radius: 10px;
+            background: rgba(0, 0, 30, 0.8);
+            overflow: hidden;
+        }
+
+        #characterCanvas {
+            image-rendering: crisp-edges;
+        }
+
+        #characterStatus {
+            text-align: center;
+            padding: 5px;
+            font-size: 1.2em;
+            color: var(--ff-blue);
+            text-shadow: 0 0 5px var(--ff-gold);
+        }
+
+        .muscle-glow {
+            animation: muscleGlow 1.5s ease-out;
+        }
+
+        @keyframes muscleGlow {
+            0% { filter: drop-shadow(0 0 5px var(--ff-gold)); }
+            50% { filter: drop-shadow(0 0 15px var(--ff-blue)); }
+            100% { filter: drop-shadow(0 0 5px var(--ff-gold)); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚔️ Mako Protein Chamber ⚔️</h1>
+        <h1>⚔️ 戰士蛋白質進化室 ⚔️</h1>
         
-        <!-- 用户设置面板 -->
+        <!-- 角色進化面板 -->
         <div class="ff-panel">
-            <h2>🔮 Warrior Profile</h2>
-            <label>Height (cm): </label>
+            <h2>🏋️♂️ 戰士進化系統</h2>
+            <div class="character-container">
+                <canvas id="characterCanvas" width="200" height="300"></canvas>
+                <div id="characterStatus">見習戰士</div>
+            </div>
+        </div>
+
+        <!-- 用戶設定面板 -->
+        <div class="ff-panel">
+            <h2>🔮 戰士檔案</h2>
+            <label>身高 (cm): </label>
             <input type="number" id="height" value="175">
-            <label>Weight (kg): </label>
+            <label>體重 (kg): </label>
             <input type="number" id="weight" value="70">
-            <button onclick="calculateNeeds()">Summon Calculation</button>
+            <button onclick="calculateNeeds()">召喚計算</button>
             <div id="needsDisplay"></div>
         </div>
 
-        <!-- 食物输入面板 -->
+        <!-- 食物輸入面板 -->
         <div class="ff-panel">
-            <h2>🍖 Materia Nutrition</h2>
-            <input type="text" id="foodName" placeholder="Food name" list="foodList">
+            <h2>🍖 營養物質輸入</h2>
+            <input type="text" id="foodName" placeholder="食物名稱" list="foodList">
             <datalist id="foodList">
-                <!-- 常见食物数据库 -->
-                <option value="Chicken Breast (100g)">Chicken Breast (100g)</option>
-                <option value="Salmon (100g)">Salmon (100g)</option>
-                <option value="Egg (Large)">Egg (Large)</option>
-                <option value="Whey Protein (1 scoop)">Whey Protein (1 scoop)</option>
-                <option value="Greek Yogurt (100g)">Greek Yogurt (100g)</option>
-                <option value="Almonds (28g)">Almonds (28g)</option>
+                <option value="雞胸肉 (100克)">雞胸肉 (100克)</option>
+                <option value="鮭魚 (100克)">鮭魚 (100克)</option>
+                <option value="雞蛋 (大)">雞蛋 (大)</option>
+                <option value="乳清蛋白 (1勺)">乳清蛋白 (1勺)</option>
+                <option value="希臘優格 (100克)">希臘優格 (100克)</option>
+                <option value="杏仁 (28克)">杏仁 (28克)</option>
             </datalist>
-            <input type="number" id="protein" placeholder="Protein (g)">
-            <button onclick="addFood()">Add Ration</button>
+            <input type="number" id="protein" placeholder="蛋白質 (克)">
+            <button onclick="addFood()">添加補給</button>
         </div>
 
-        <!-- 进度面板 -->
+        <!-- 進度面板 -->
         <div class="ff-panel">
-            <h2>📜 Scroll of Progress</h2>
+            <h2>📜 進化卷軸</h2>
             <div class="progress-bar">
                 <div class="progress-fill" id="proteinProgress"></div>
             </div>
             <p id="remainingText"></p>
         </div>
 
-        <!-- 食物记录表格 -->
+        <!-- 食物記錄表格 -->
         <table>
             <thead>
                 <tr>
-                    <th>Provision</th>
-                    <th>Power (g)</th>
-                    <th>Time</th>
-                    <th>Actions</th>
+                    <th>補給品</th>
+                    <th>能量 (克)</th>
+                    <th>時間</th>
+                    <th>操作</th>
                 </tr>
             </thead>
             <tbody id="foodTableBody"></tbody>
             <tfoot>
                 <tr>
-                    <th>Total Power</th>
-                    <th id="totalProtein">0g</th>
+                    <th>總能量</th>
+                    <th id="totalProtein">0克</th>
                     <th colspan="2"></th>
                 </tr>
             </tfoot>
@@ -173,33 +214,113 @@
     </div>
 
     <script>
-        // 食物蛋白质数据库（单位：克）
+        // 食物蛋白質數據庫
         const FOOD_DB = {
-            'chicken breast (100g)': 31,
-            'salmon (100g)': 25,
-            'egg (large)': 6,
-            'whey protein (1 scoop)': 25,
-            'greek yogurt (100g)': 10,
-            'almonds (28g)': 6
+            '雞胸肉 (100克)': 31,
+            '鮭魚 (100克)': 25,
+            '雞蛋 (大)': 6,
+            '乳清蛋白 (1勺)': 25,
+            '希臘優格 (100克)': 10,
+            '杏仁 (28克)': 6
         };
 
         let proteinNeeds = 0;
         let foods = JSON.parse(localStorage.getItem('foods')) || [];
         
+        // 角色繪製系統
+        const canvas = document.getElementById('characterCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentStage = 0;
+
+        function drawCharacter(proteinPercentage) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 根據進度計算肌肉等級
+            const stage = Math.min(Math.floor(proteinPercentage / 33), 2);
+            const muscleFactor = 1 + (stage * 0.3);
+            
+            // 更新進化狀態
+            if(stage !== currentStage) {
+                document.getElementById('characterStatus').classList.add('muscle-glow');
+                currentStage = stage;
+                setTimeout(() => {
+                    document.getElementById('characterStatus').classList.remove('muscle-glow');
+                }, 1500);
+            }
+            
+            // 設定狀態文字
+            const statusText = [
+                '見習戰士', 
+                '資深戰士', 
+                '肌肉領主'
+            ][stage];
+            document.getElementById('characterStatus').textContent = statusText;
+
+            // 繪製身體部位
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            
+            // 頭部
+            ctx.beginPath();
+            ctx.arc(100, 60, 20, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // 軀幹（隨肌肉等級變化）
+            ctx.beginPath();
+            ctx.moveTo(100, 80);
+            ctx.lineTo(100 - (20 * muscleFactor), 150);
+            ctx.lineTo(100 + (20 * muscleFactor), 150);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // 手臂
+            ctx.beginPath();
+            // 左臂
+            ctx.moveTo(100 - (20 * muscleFactor), 110);
+            ctx.lineTo(60 - (5 * muscleFactor), 90);
+            // 右臂
+            ctx.moveTo(100 + (20 * muscleFactor), 110);
+            ctx.lineTo(140 + (5 * muscleFactor), 90);
+            ctx.stroke();
+            
+            // 腿部
+            ctx.beginPath();
+            ctx.moveTo(100, 150);
+            ctx.lineTo(80, 220);
+            ctx.moveTo(100, 150);
+            ctx.lineTo(120, 220);
+            ctx.stroke();
+            
+            // 肌肉細節
+            if(stage > 0) {
+                ctx.beginPath();
+                // 胸肌
+                ctx.moveTo(100 - (10 * muscleFactor), 100);
+                ctx.lineTo(100 + (10 * muscleFactor), 100);
+                // 腹肌
+                for(let i = 0; i < 3; i++) {
+                    ctx.moveTo(100 - (8 * muscleFactor), 120 + (i * 10));
+                    ctx.lineTo(100 + (8 * muscleFactor), 120 + (i * 10));
+                }
+                ctx.stroke();
+            }
+        }
+
         // 初始化
         window.addEventListener('load', () => {
             if (localStorage.getItem('proteinNeeds')) {
                 proteinNeeds = parseInt(localStorage.getItem('proteinNeeds'));
                 document.getElementById('needsDisplay').innerHTML = 
-                    `<p>⚔️ Required Protein: ${proteinNeeds}g</p>`;
+                    `<p>⚔️ 每日需求蛋白質: ${proteinNeeds}克</p>`;
                 updateProgress();
             }
             renderTable();
+            drawCharacter(0); // 初始角色
         });
 
-        // 自动填充蛋白质数值
+        // 自動填充蛋白質數值
         document.getElementById('foodName').addEventListener('change', function() {
-            const foodKey = this.value.toLowerCase();
+            const foodKey = this.value;
             if (FOOD_DB[foodKey]) {
                 document.getElementById('protein').value = FOOD_DB[foodKey];
             }
@@ -211,8 +332,8 @@
             proteinNeeds = Math.round(weight * 2.2);
             
             document.getElementById('needsDisplay').innerHTML = `
-                <p>⚔️ Required Protein: ${proteinNeeds}g</p>
-                <p>🔥 Suggested Calories: ${Math.round(weight * 40)}kcal</p>
+                <p>⚔️ 每日需求蛋白質: ${proteinNeeds}克</p>
+                <p>🔥 建議攝取熱量: ${Math.round(weight * 40)}大卡</p>
             `;
             
             localStorage.setItem('proteinNeeds', proteinNeeds);
@@ -224,7 +345,7 @@
             const protein = parseFloat(document.getElementById('protein').value);
             
             if (!foodName || isNaN(protein)) {
-                alert("Missing provisions data!");
+                alert("請輸入完整的補給資料！");
                 return;
             }
 
@@ -259,14 +380,18 @@
         function updateProgress() {
             const total = foods.reduce((sum, food) => sum + food.protein, 0);
             const remaining = proteinNeeds - total;
+            const proteinPercentage = (total / proteinNeeds) * 100 || 0;
             
-            document.getElementById('totalProtein').textContent = `${total}g`;
+            document.getElementById('totalProtein').textContent = `${total}克`;
             document.getElementById('proteinProgress').style.width = 
-                `${Math.min((total / proteinNeeds) * 100, 100)}%`;
+                `${Math.min(proteinPercentage, 100)}%`;
             
             document.getElementById('remainingText').innerHTML = remaining > 0 ?
-                `⚡ Need ${remaining}g more to complete your mission!` :
-                '🎉 Victory Achieved! Your protein quest is complete!';
+                `⚡ 還需要${remaining}克完成進化！` :
+                '🎉 進化完成！你已達成蛋白質目標！';
+            
+            // 更新角色狀態
+            drawCharacter(proteinPercentage);
         }
 
         function renderTable() {
@@ -274,12 +399,12 @@
             tbody.innerHTML = foods.map(food => `
                 <tr>
                     <td>${food.name}</td>
-                    <td>${food.protein}g</td>
+                    <td>${food.protein}克</td>
                     <td>${food.time}</td>
                     <td>
                         <div class="ff-button-group">
-                            <button onclick="editFood(${food.id})">✎ Edit</button>
-                            <button onclick="deleteFood(${food.id})">🗑️ Delete</button>
+                            <button onclick="editFood(${food.id})">✎ 編輯</button>
+                            <button onclick="deleteFood(${food.id})">🗑️ 刪除</button>
                         </div>
                     </td>
                 </tr>
