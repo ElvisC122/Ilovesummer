@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>戰士蛋白質進化系統</title>
+    <title>戰神蛋白質進化系統</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
         
@@ -109,52 +109,58 @@
             font-size: 0.8em;
         }
 
-        /* 新增角色樣式 */
+        /* 戰士角色新樣式 */
         .character-container {
-            position: relative;
-            margin: 20px auto;
-            width: 200px;
-            border: 2px solid var(--ff-gold);
-            border-radius: 10px;
-            background: rgba(0, 0, 30, 0.8);
-            overflow: hidden;
-        }
-
-        #characterCanvas {
-            image-rendering: crisp-edges;
-        }
-
-        #characterStatus {
             text-align: center;
-            padding: 5px;
-            font-size: 1.2em;
-            color: var(--ff-blue);
-            text-shadow: 0 0 5px var(--ff-gold);
+            margin: 40px 0;
+            position: relative;
+            filter: drop-shadow(0 0 15px rgba(255,215,0,0.3));
         }
 
-        .muscle-glow {
-            animation: muscleGlow 1.5s ease-out;
+        #warriorImage {
+            height: 350px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            image-rendering: high-quality;
         }
 
-        @keyframes muscleGlow {
-            0% { filter: drop-shadow(0 0 5px var(--ff-gold)); }
-            50% { filter: drop-shadow(0 0 15px var(--ff-blue)); }
-            100% { filter: drop-shadow(0 0 5px var(--ff-gold)); }
+        .evolution-stage {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.4em;
+            background: linear-gradient(90deg, #0a7cff 0%, #00ffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: stageGlow 2s infinite alternate;
+            white-space: nowrap;
+        }
+
+        @keyframes stageGlow {
+            from { text-shadow: 0 0 10px rgba(10,124,255,0.5); }
+            to { text-shadow: 0 0 20px rgba(0,255,255,0.8); }
+        }
+
+        #warriorImage:hover {
+            transform: scale(1.05) rotate(-2deg);
+            filter: drop-shadow(0 0 20px rgba(255,215,0,0.5));
+        }
+
+        .evolution-burst {
+            animation: evolutionPulse 1s ease-out;
+        }
+
+        @keyframes evolutionPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15) rotate(5deg); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>⚔️ 戰士蛋白質進化室 ⚔️</h1>
-        
-        <!-- 角色進化面板 -->
-        <div class="ff-panel">
-            <h2>🏋️♂️ 戰士進化系統</h2>
-            <div class="character-container">
-                <canvas id="characterCanvas" width="200" height="300"></canvas>
-                <div id="characterStatus">見習戰士</div>
-            </div>
-        </div>
+        <h1>⚔️ 戰神蛋白質進化室 ⚔️</h1>
 
         <!-- 用戶設定面板 -->
         <div class="ff-panel">
@@ -192,6 +198,12 @@
             <p id="remainingText"></p>
         </div>
 
+        <!-- 戰士角色顯示 -->
+        <div class="character-container">
+            <img id="warriorImage" src="https://via.placeholder.com/250x350/0a7cff/ffffff?text=Stage1" alt="戰士進化形象">
+            <div class="evolution-stage" id="stageText">蛋白質學徒</div>
+        </div>
+
         <!-- 食物記錄表格 -->
         <table>
             <thead>
@@ -226,87 +238,28 @@
 
         let proteinNeeds = 0;
         let foods = JSON.parse(localStorage.getItem('foods')) || [];
-        
-        // 角色繪製系統
-        const canvas = document.getElementById('characterCanvas');
-        const ctx = canvas.getContext('2d');
-        let currentStage = 0;
+        let previousStage = 0;
 
-        function drawCharacter(proteinPercentage) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // 根據進度計算肌肉等級
-            const stage = Math.min(Math.floor(proteinPercentage / 33), 2);
-            const muscleFactor = 1 + (stage * 0.3);
-            
-            // 更新進化狀態
-            if(stage !== currentStage) {
-                document.getElementById('characterStatus').classList.add('muscle-glow');
-                currentStage = stage;
-                setTimeout(() => {
-                    document.getElementById('characterStatus').classList.remove('muscle-glow');
-                }, 1500);
+        // 角色進化階段設定
+        const EVOLUTION_STAGES = [
+            { 
+                image: 'https://via.placeholder.com/250x350/0a7cff/ffffff?text=Stage1',
+                text: '蛋白質學徒',
+                threshold: 0
+            },
+            {
+                image: 'https://via.placeholder.com/250x350/00ffff/000000?text=Stage2',
+                text: '肌肉騎士',
+                threshold: 33
+            },
+            {
+                image: 'https://via.placeholder.com/250x350/ff00ff/ffffff?text=Stage3',
+                text: '究極戰神',
+                threshold: 66
             }
-            
-            // 設定狀態文字
-            const statusText = [
-                '見習戰士', 
-                '資深戰士', 
-                '肌肉領主'
-            ][stage];
-            document.getElementById('characterStatus').textContent = statusText;
+        ];
 
-            // 繪製身體部位
-            ctx.strokeStyle = '#ffd700';
-            ctx.lineWidth = 2;
-            
-            // 頭部
-            ctx.beginPath();
-            ctx.arc(100, 60, 20, 0, Math.PI * 2);
-            ctx.stroke();
-            
-            // 軀幹（隨肌肉等級變化）
-            ctx.beginPath();
-            ctx.moveTo(100, 80);
-            ctx.lineTo(100 - (20 * muscleFactor), 150);
-            ctx.lineTo(100 + (20 * muscleFactor), 150);
-            ctx.closePath();
-            ctx.stroke();
-            
-            // 手臂
-            ctx.beginPath();
-            // 左臂
-            ctx.moveTo(100 - (20 * muscleFactor), 110);
-            ctx.lineTo(60 - (5 * muscleFactor), 90);
-            // 右臂
-            ctx.moveTo(100 + (20 * muscleFactor), 110);
-            ctx.lineTo(140 + (5 * muscleFactor), 90);
-            ctx.stroke();
-            
-            // 腿部
-            ctx.beginPath();
-            ctx.moveTo(100, 150);
-            ctx.lineTo(80, 220);
-            ctx.moveTo(100, 150);
-            ctx.lineTo(120, 220);
-            ctx.stroke();
-            
-            // 肌肉細節
-            if(stage > 0) {
-                ctx.beginPath();
-                // 胸肌
-                ctx.moveTo(100 - (10 * muscleFactor), 100);
-                ctx.lineTo(100 + (10 * muscleFactor), 100);
-                // 腹肌
-                for(let i = 0; i < 3; i++) {
-                    ctx.moveTo(100 - (8 * muscleFactor), 120 + (i * 10));
-                    ctx.lineTo(100 + (8 * muscleFactor), 120 + (i * 10));
-                }
-                ctx.stroke();
-            }
-        }
-
-        // 初始化
+        // 初始化載入
         window.addEventListener('load', () => {
             if (localStorage.getItem('proteinNeeds')) {
                 proteinNeeds = parseInt(localStorage.getItem('proteinNeeds'));
@@ -315,7 +268,6 @@
                 updateProgress();
             }
             renderTable();
-            drawCharacter(0); // 初始角色
         });
 
         // 自動填充蛋白質數值
@@ -390,8 +342,26 @@
                 `⚡ 還需要${remaining}克完成進化！` :
                 '🎉 進化完成！你已達成蛋白質目標！';
             
-            // 更新角色狀態
-            drawCharacter(proteinPercentage);
+            updateCharacter(proteinPercentage);
+        }
+
+        function updateCharacter(proteinPercentage) {
+            const warriorImg = document.getElementById('warriorImage');
+            const stageText = document.getElementById('stageText');
+            
+            let currentStage = EVOLUTION_STAGES.reduce((acc, stage, index) => {
+                return proteinPercentage >= stage.threshold ? index : acc;
+            }, 0);
+
+            if(EVOLUTION_STAGES[currentStage].image !== warriorImg.src) {
+                warriorImg.src = EVOLUTION_STAGES[currentStage].image;
+                stageText.textContent = EVOLUTION_STAGES[currentStage].text;
+                warriorImg.classList.add('evolution-burst');
+                
+                setTimeout(() => {
+                    warriorImg.classList.remove('evolution-burst');
+                }, 1000);
+            }
         }
 
         function renderTable() {
