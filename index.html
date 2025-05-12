@@ -1,385 +1,189 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>戰神蛋白質進化系統</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
-        
-        :root {
-            --ff-blue: #0a7cff;
-            --ff-gold: #ffd700;
-            --ff-dark: #001a4d;
-        }
-
-        body {
-            font-family: 'MedievalSharp', cursive;
-            background: linear-gradient(45deg, var(--ff-dark), #000033);
-            color: var(--ff-gold);
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            border: 3px solid var(--ff-gold);
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(0, 20, 80, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px var(--ff-blue);
-        }
-
-        h1 {
-            text-align: center;
-            color: var(--ff-gold);
-            text-shadow: 0 0 10px var(--ff-blue);
-            border-bottom: 2px solid var(--ff-gold);
-            padding-bottom: 10px;
-        }
-
-        .ff-panel {
-            background: rgba(0, 0, 50, 0.8);
-            border: 2px solid var(--ff-gold);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-        }
-
-        input, select, button {
-            font-family: inherit;
-            background: var(--ff-dark);
-            color: var(--ff-gold);
-            border: 1px solid var(--ff-blue);
-            padding: 8px;
-            margin: 5px;
-            border-radius: 3px;
-        }
-
-        button {
-            background: linear-gradient(to bottom, var(--ff-dark), #000066);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            box-shadow: 0 0 5px var(--ff-blue);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            border: 2px solid var(--ff-gold);
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--ff-blue);
-        }
-
-        th {
-            background: rgba(0, 50, 100, 0.5);
-        }
-
-        .progress-bar {
-            height: 20px;
-            background: var(--ff-dark);
-            border: 1px solid var(--ff-blue);
-            position: relative;
-            margin: 15px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(to right, var(--ff-blue), #00ffff);
-            width: 0%;
-            transition: 0.5s;
-        }
-
-        .ff-button-group {
-            display: flex;
-            gap: 5px;
-        }
-
-        .ff-button-group button {
-            padding: 5px 10px;
-            font-size: 0.8em;
-        }
-
-        /* 戰士角色新樣式 */
-        .character-container {
-            text-align: center;
-            margin: 40px 0;
-            position: relative;
-            filter: drop-shadow(0 0 15px rgba(255,215,0,0.3));
-        }
-
-        #warriorImage {
-            height: 350px;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            image-rendering: high-quality;
-        }
-
-        .evolution-stage {
-            position: absolute;
-            bottom: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.4em;
-            background: linear-gradient(90deg, #0a7cff 0%, #00ffff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: stageGlow 2s infinite alternate;
-            white-space: nowrap;
-        }
-
-        @keyframes stageGlow {
-            from { text-shadow: 0 0 10px rgba(10,124,255,0.5); }
-            to { text-shadow: 0 0 20px rgba(0,255,255,0.8); }
-        }
-
-        #warriorImage:hover {
-            transform: scale(1.05) rotate(-2deg);
-            filter: drop-shadow(0 0 20px rgba(255,215,0,0.5));
-        }
-
-        .evolution-burst {
-            animation: evolutionPulse 1s ease-out;
-        }
-
-        @keyframes evolutionPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15) rotate(5deg); }
-            100% { transform: scale(1); }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>五十音練習機 - 時雨の町風</title>
+  <style>
+    body {
+      font-family: "M PLUS 1", sans-serif, "微軟正黑體", "Microsoft JhengHei", sans-serif;
+      background-color: #4f4f4f;
+      color: #ccc;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      user-select: none;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      color: #6fbbff;
+      text-shadow: 1px 1px 2px #000;
+    }
+    #kanaDisplay {
+      font-size: 8rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px #000;
+    }
+    #inputRomaji {
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      width: 200px;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: rgba(255 255 255 / 0.1);
+      color: #eee;
+    }
+    #inputRomaji:focus {
+      background: rgba(103, 201, 255, 0.2);
+      color: #000;
+    }
+    #checkBtn {
+      font-size: 1.5rem;
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #66acff;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    #checkBtn:hover {
+      background-color: #4a8de0;
+    }
+    #result {
+      margin-top: 1rem;
+      font-size: 1.5rem;
+      min-height: 2rem;
+      font-weight: 600;
+      text-shadow: 1px 1px 2px #000;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #777;
+      background: #2a2a2a;
+      user-select: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>⚔️ 戰神蛋白質進化室 ⚔️</h1>
+  <h1>五十音練習機</h1>
+  <div id="kanaDisplay">あ</div>
+  <input
+    type="text"
+    id="inputRomaji"
+    placeholder="請輸入羅馬拼音"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
+  />
+  <button id="checkBtn">確認</button>
+  <div id="result"></div>
 
-        <!-- 用戶設定面板 -->
-        <div class="ff-panel">
-            <h2>🔮 戰士檔案</h2>
-            <label>身高 (cm): </label>
-            <input type="number" id="height" value="175">
-            <label>體重 (kg): </label>
-            <input type="number" id="weight" value="70">
-            <button onclick="calculateNeeds()">召喚計算</button>
-            <div id="needsDisplay"></div>
-        </div>
+  <footer>參考自「時雨の町」五十音練習機風格</footer>
 
-        <!-- 食物輸入面板 -->
-        <div class="ff-panel">
-            <h2>🍖 營養物質輸入</h2>
-            <input type="text" id="foodName" placeholder="食物名稱" list="foodList">
-            <datalist id="foodList">
-                <option value="雞胸肉 (100克)">雞胸肉 (100克)</option>
-                <option value="鮭魚 (100克)">鮭魚 (100克)</option>
-                <option value="雞蛋 (大)">雞蛋 (大)</option>
-                <option value="乳清蛋白 (1勺)">乳清蛋白 (1勺)</option>
-                <option value="希臘優格 (100克)">希臘優格 (100克)</option>
-                <option value="杏仁 (28克)">杏仁 (28克)</option>
-            </datalist>
-            <input type="number" id="protein" placeholder="蛋白質 (克)">
-            <button onclick="addFood()">添加補給</button>
-        </div>
+  <script>
+    // 五十音平假名與羅馬拼音對應表（清音）
+    const gojuon = [
+      { kana: "あ", romaji: "a" },
+      { kana: "い", romaji: "i" },
+      { kana: "う", romaji: "u" },
+      { kana: "え", romaji: "e" },
+      { kana: "お", romaji: "o" },
+      { kana: "か", romaji: "ka" },
+      { kana: "き", romaji: "ki" },
+      { kana: "く", romaji: "ku" },
+      { kana: "け", romaji: "ke" },
+      { kana: "こ", romaji: "ko" },
+      { kana: "さ", romaji: "sa" },
+      { kana: "し", romaji: "shi" },
+      { kana: "す", romaji: "su" },
+      { kana: "せ", romaji: "se" },
+      { kana: "そ", romaji: "so" },
+      { kana: "た", romaji: "ta" },
+      { kana: "ち", romaji: "chi" },
+      { kana: "つ", romaji: "tsu" },
+      { kana: "て", romaji: "te" },
+      { kana: "と", romaji: "to" },
+      { kana: "な", romaji: "na" },
+      { kana: "に", romaji: "ni" },
+      { kana: "ぬ", romaji: "nu" },
+      { kana: "ね", romaji: "ne" },
+      { kana: "の", romaji: "no" },
+      { kana: "は", romaji: "ha" },
+      { kana: "ひ", romaji: "hi" },
+      { kana: "ふ", romaji: "fu" },
+      { kana: "へ", romaji: "he" },
+      { kana: "ほ", romaji: "ho" },
+      { kana: "ま", romaji: "ma" },
+      { kana: "み", romaji: "mi" },
+      { kana: "む", romaji: "mu" },
+      { kana: "め", romaji: "me" },
+      { kana: "も", romaji: "mo" },
+      { kana: "や", romaji: "ya" },
+      { kana: "ゆ", romaji: "yu" },
+      { kana: "よ", romaji: "yo" },
+      { kana: "ら", romaji: "ra" },
+      { kana: "り", romaji: "ri" },
+      { kana: "る", romaji: "ru" },
+      { kana: "れ", romaji: "re" },
+      { kana: "ろ", romaji: "ro" },
+      { kana: "わ", romaji: "wa" },
+      { kana: "を", romaji: "wo" },
+      { kana: "ん", romaji: "n" }
+    ];
 
-        <!-- 進度面板 -->
-        <div class="ff-panel">
-            <h2>📜 進化卷軸</h2>
-            <div class="progress-bar">
-                <div class="progress-fill" id="proteinProgress"></div>
-            </div>
-            <p id="remainingText"></p>
-        </div>
+    let currentIndex = -1;
 
-        <!-- 戰士角色顯示 -->
-        <div class="character-container">
-            <img id="warriorImage" src="https://via.placeholder.com/250x350/0a7cff/ffffff?text=Stage1" alt="戰士進化形象">
-            <div class="evolution-stage" id="stageText">蛋白質學徒</div>
-        </div>
+    function newQuestion() {
+      currentIndex = Math.floor(Math.random() * gojuon.length);
+      const kana = gojuon[currentIndex].kana;
+      document.getElementById("kanaDisplay").textContent = kana;
+      document.getElementById("inputRomaji").value = "";
+      document.getElementById("result").textContent = "";
+      document.getElementById("inputRomaji").focus();
+    }
 
-        <!-- 食物記錄表格 -->
-        <table>
-            <thead>
-                <tr>
-                    <th>補給品</th>
-                    <th>能量 (克)</th>
-                    <th>時間</th>
-                    <th>操作</th>
-                </tr>
-            </thead>
-            <tbody id="foodTableBody"></tbody>
-            <tfoot>
-                <tr>
-                    <th>總能量</th>
-                    <th id="totalProtein">0克</th>
-                    <th colspan="2"></th>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+    function checkAnswer() {
+      const input = document
+        .getElementById("inputRomaji")
+        .value.trim()
+        .toLowerCase();
+      const correct = gojuon[currentIndex].romaji;
 
-    <script>
-        // 食物蛋白質數據庫
-        const FOOD_DB = {
-            '雞胸肉 (100克)': 31,
-            '鮭魚 (100克)': 25,
-            '雞蛋 (大)': 6,
-            '乳清蛋白 (1勺)': 25,
-            '希臘優格 (100克)': 10,
-            '杏仁 (28克)': 6
-        };
+      if (input === correct) {
+        document.getElementById("result").textContent = "答對了！🎉";
+        setTimeout(newQuestion, 1000);
+      } else {
+        document.getElementById("result").textContent = `答錯了，再試一次。正確答案是：${correct}`;
+      }
+    }
 
-        let proteinNeeds = 0;
-        let foods = JSON.parse(localStorage.getItem('foods')) || [];
-        let previousStage = 0;
+    document.getElementById("checkBtn").addEventListener("click", checkAnswer);
 
-        // 角色進化階段設定
-        const EVOLUTION_STAGES = [
-            { 
-                image: 'https://via.placeholder.com/250x350/0a7cff/ffffff?text=Stage1',
-                text: '蛋白質學徒',
-                threshold: 0
-            },
-            {
-                image: 'https://via.placeholder.com/250x350/00ffff/000000?text=Stage2',
-                text: '肌肉騎士',
-                threshold: 33
-            },
-            {
-                image: 'https://via.placeholder.com/250x350/ff00ff/ffffff?text=Stage3',
-                text: '究極戰神',
-                threshold: 66
-            }
-        ];
-
-        // 初始化載入
-        window.addEventListener('load', () => {
-            if (localStorage.getItem('proteinNeeds')) {
-                proteinNeeds = parseInt(localStorage.getItem('proteinNeeds'));
-                document.getElementById('needsDisplay').innerHTML = 
-                    `<p>⚔️ 每日需求蛋白質: ${proteinNeeds}克</p>`;
-                updateProgress();
-            }
-            renderTable();
-        });
-
-        // 自動填充蛋白質數值
-        document.getElementById('foodName').addEventListener('change', function() {
-            const foodKey = this.value;
-            if (FOOD_DB[foodKey]) {
-                document.getElementById('protein').value = FOOD_DB[foodKey];
-            }
-        });
-
-        function calculateNeeds() {
-            const height = parseFloat(document.getElementById('height').value);
-            const weight = parseFloat(document.getElementById('weight').value);
-            proteinNeeds = Math.round(weight * 2.2);
-            
-            document.getElementById('needsDisplay').innerHTML = `
-                <p>⚔️ 每日需求蛋白質: ${proteinNeeds}克</p>
-                <p>🔥 建議攝取熱量: ${Math.round(weight * 40)}大卡</p>
-            `;
-            
-            localStorage.setItem('proteinNeeds', proteinNeeds);
-            updateProgress();
+    // Enter鍵也能提交
+    document
+      .getElementById("inputRomaji")
+      .addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          checkAnswer();
         }
+      });
 
-        function addFood() {
-            const foodName = document.getElementById('foodName').value;
-            const protein = parseFloat(document.getElementById('protein').value);
-            
-            if (!foodName || isNaN(protein)) {
-                alert("請輸入完整的補給資料！");
-                return;
-            }
-
-            foods.push({
-                id: Date.now(),
-                name: foodName,
-                protein: protein,
-                time: new Date().toLocaleTimeString()
-            });
-            
-            saveAndUpdate();
-        }
-
-        function editFood(id) {
-            const food = foods.find(item => item.id === id);
-            document.getElementById('foodName').value = food.name;
-            document.getElementById('protein').value = food.protein;
-            deleteFood(id);
-        }
-
-        function deleteFood(id) {
-            foods = foods.filter(item => item.id !== id);
-            saveAndUpdate();
-        }
-
-        function saveAndUpdate() {
-            localStorage.setItem('foods', JSON.stringify(foods));
-            updateProgress();
-            renderTable();
-        }
-
-        function updateProgress() {
-            const total = foods.reduce((sum, food) => sum + food.protein, 0);
-            const remaining = proteinNeeds - total;
-            const proteinPercentage = (total / proteinNeeds) * 100 || 0;
-            
-            document.getElementById('totalProtein').textContent = `${total}克`;
-            document.getElementById('proteinProgress').style.width = 
-                `${Math.min(proteinPercentage, 100)}%`;
-            
-            document.getElementById('remainingText').innerHTML = remaining > 0 ?
-                `⚡ 還需要${remaining}克完成進化！` :
-                '🎉 進化完成！你已達成蛋白質目標！';
-            
-            updateCharacter(proteinPercentage);
-        }
-
-        function updateCharacter(proteinPercentage) {
-            const warriorImg = document.getElementById('warriorImage');
-            const stageText = document.getElementById('stageText');
-            
-            let currentStage = EVOLUTION_STAGES.reduce((acc, stage, index) => {
-                return proteinPercentage >= stage.threshold ? index : acc;
-            }, 0);
-
-            if(EVOLUTION_STAGES[currentStage].image !== warriorImg.src) {
-                warriorImg.src = EVOLUTION_STAGES[currentStage].image;
-                stageText.textContent = EVOLUTION_STAGES[currentStage].text;
-                warriorImg.classList.add('evolution-burst');
-                
-                setTimeout(() => {
-                    warriorImg.classList.remove('evolution-burst');
-                }, 1000);
-            }
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('foodTableBody');
-            tbody.innerHTML = foods.map(food => `
-                <tr>
-                    <td>${food.name}</td>
-                    <td>${food.protein}克</td>
-                    <td>${food.time}</td>
-                    <td>
-                        <div class="ff-button-group">
-                            <button onclick="editFood(${food.id})">✎ 編輯</button>
-                            <button onclick="deleteFood(${food.id})">🗑️ 刪除</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-    </script>
+    // 初始化第一題
+    newQuestion();
+  </script>
 </body>
 </html>
