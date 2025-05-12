@@ -1,189 +1,331 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>五十音練習機 - 時雨の町風</title>
-  <style>
-    body {
-      font-family: "M PLUS 1", sans-serif, "微軟正黑體", "Microsoft JhengHei", sans-serif;
-      background-color: #4f4f4f;
-      color: #ccc;
-      margin: 0; padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      user-select: none;
-    }
-    h1 {
-      margin-bottom: 1rem;
-      color: #6fbbff;
-      text-shadow: 1px 1px 2px #000;
-    }
-    #kanaDisplay {
-      font-size: 8rem;
-      margin-bottom: 1rem;
-      text-shadow: 2px 2px 4px #000;
-    }
-    #inputRomaji {
-      font-size: 2rem;
-      padding: 0.5rem 1rem;
-      width: 200px;
-      border: none;
-      border-radius: 5px;
-      outline: none;
-      text-align: center;
-      margin-bottom: 1rem;
-      background: rgba(255 255 255 / 0.1);
-      color: #eee;
-    }
-    #inputRomaji:focus {
-      background: rgba(103, 201, 255, 0.2);
-      color: #000;
-    }
-    #checkBtn {
-      font-size: 1.5rem;
-      padding: 0.5rem 1.5rem;
-      border: none;
-      border-radius: 5px;
-      background-color: #66acff;
-      color: #fff;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s ease;
-    }
-    #checkBtn:hover {
-      background-color: #4a8de0;
-    }
-    #result {
-      margin-top: 1rem;
-      font-size: 1.5rem;
-      min-height: 2rem;
-      font-weight: 600;
-      text-shadow: 1px 1px 2px #000;
-    }
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      text-align: center;
-      padding: 0.5rem 0;
-      font-size: 0.9rem;
-      color: #777;
-      background: #2a2a2a;
-      user-select: none;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>進階五十音練習機</title>
+<style>
+  body {
+    font-family: "M PLUS 1", sans-serif, "微軟正黑體", "Microsoft JhengHei", sans-serif;
+    background-color: #4f4f4f;
+    color: #ccc;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    user-select: none;
+  }
+  h1 {
+    margin-bottom: 1rem;
+    color: #6fbbff;
+    text-shadow: 1px 1px 2px #000;
+  }
+  #kanaDisplay {
+    font-size: 8rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px #000;
+    user-select: text;
+  }
+  #controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: none;
+    background-color: #66acff;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #4a8de0;
+  }
+  #hintDisplay {
+    font-size: 3rem;
+    color: #a7cfff;
+    margin-bottom: 1rem;
+    min-height: 3.5rem;
+    user-select: text;
+  }
+  #inputRomaji {
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    width: 200px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    text-align: center;
+    margin-bottom: 1rem;
+    background: rgba(255 255 255 / 0.1);
+    color: #eee;
+  }
+  #inputRomaji:focus {
+    background: rgba(103, 201, 255, 0.2);
+    color: #000;
+  }
+  #result {
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    min-height: 2rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px #000;
+    user-select: none;
+  }
+  #scoreTimer {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    user-select: none;
+  }
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #777;
+    background: #2a2a2a;
+    user-select: none;
+  }
+</style>
 </head>
 <body>
-  <h1>五十音練習機</h1>
-  <div id="kanaDisplay">あ</div>
-  <input
-    type="text"
-    id="inputRomaji"
-    placeholder="請輸入羅馬拼音"
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="off"
-    spellcheck="false"
-  />
-  <button id="checkBtn">確認</button>
-  <div id="result"></div>
+<h1>進階五十音練習機</h1>
 
-  <footer>參考自「時雨の町」五十音練習機風格</footer>
+<div id="kanaDisplay">あ</div>
+<div id="controls">
+  <button id="hintBtn">顯示提示（片假名/平假名）</button>
+  <button id="playSoundBtn">播放發音 🔊</button>
+</div>
+<div id="hintDisplay"></div>
 
-  <script>
-    // 五十音平假名與羅馬拼音對應表（清音）
-    const gojuon = [
-      { kana: "あ", romaji: "a" },
-      { kana: "い", romaji: "i" },
-      { kana: "う", romaji: "u" },
-      { kana: "え", romaji: "e" },
-      { kana: "お", romaji: "o" },
-      { kana: "か", romaji: "ka" },
-      { kana: "き", romaji: "ki" },
-      { kana: "く", romaji: "ku" },
-      { kana: "け", romaji: "ke" },
-      { kana: "こ", romaji: "ko" },
-      { kana: "さ", romaji: "sa" },
-      { kana: "し", romaji: "shi" },
-      { kana: "す", romaji: "su" },
-      { kana: "せ", romaji: "se" },
-      { kana: "そ", romaji: "so" },
-      { kana: "た", romaji: "ta" },
-      { kana: "ち", romaji: "chi" },
-      { kana: "つ", romaji: "tsu" },
-      { kana: "て", romaji: "te" },
-      { kana: "と", romaji: "to" },
-      { kana: "な", romaji: "na" },
-      { kana: "に", romaji: "ni" },
-      { kana: "ぬ", romaji: "nu" },
-      { kana: "ね", romaji: "ne" },
-      { kana: "の", romaji: "no" },
-      { kana: "は", romaji: "ha" },
-      { kana: "ひ", romaji: "hi" },
-      { kana: "ふ", romaji: "fu" },
-      { kana: "へ", romaji: "he" },
-      { kana: "ほ", romaji: "ho" },
-      { kana: "ま", romaji: "ma" },
-      { kana: "み", romaji: "mi" },
-      { kana: "む", romaji: "mu" },
-      { kana: "め", romaji: "me" },
-      { kana: "も", romaji: "mo" },
-      { kana: "や", romaji: "ya" },
-      { kana: "ゆ", romaji: "yu" },
-      { kana: "よ", romaji: "yo" },
-      { kana: "ら", romaji: "ra" },
-      { kana: "り", romaji: "ri" },
-      { kana: "る", romaji: "ru" },
-      { kana: "れ", romaji: "re" },
-      { kana: "ろ", romaji: "ro" },
-      { kana: "わ", romaji: "wa" },
-      { kana: "を", romaji: "wo" },
-      { kana: "ん", romaji: "n" }
-    ];
+<input
+  type="text"
+  id="inputRomaji"
+  placeholder="請輸入羅馬拼音"
+  autocomplete="off"
+  autocorrect="off"
+  autocapitalize="off"
+  spellcheck="false"
+/>
+<button id="checkBtn">確認</button>
 
-    let currentIndex = -1;
+<div id="result"></div>
+<div id="scoreTimer">分數：0 | 剩餘時間：30秒</div>
 
-    function newQuestion() {
-      currentIndex = Math.floor(Math.random() * gojuon.length);
-      const kana = gojuon[currentIndex].kana;
-      document.getElementById("kanaDisplay").textContent = kana;
-      document.getElementById("inputRomaji").value = "";
-      document.getElementById("result").textContent = "";
-      document.getElementById("inputRomaji").focus();
+<footer>參考自「時雨の町」五十音練習機，加入濁音、半濁音、拗音與音檔播放</footer>
+
+<script>
+  // 五十音資料（平假名、片假名、羅馬拼音、語音檔URL）
+  // 語音檔可自行替換成你準備的音檔URL，這裡用示意URL
+  const gojuon = [
+    { hira: "あ", kata: "ア", romaji: "a", audio: "https://assets.codepen.io/4403884/a.mp3" },
+    { hira: "い", kata: "イ", romaji: "i", audio: "https://assets.codepen.io/4403884/i.mp3" },
+    { hira: "う", kata: "ウ", romaji: "u", audio: "https://assets.codepen.io/4403884/u.mp3" },
+    { hira: "え", kata: "エ", romaji: "e", audio: "https://assets.codepen.io/4403884/e.mp3" },
+    { hira: "お", kata: "オ", romaji: "o", audio: "https://assets.codepen.io/4403884/o.mp3" },
+    { hira: "か", kata: "カ", romaji: "ka", audio: "https://assets.codepen.io/4403884/ka.mp3" },
+    { hira: "き", kata: "キ", romaji: "ki", audio: "https://assets.codepen.io/4403884/ki.mp3" },
+    { hira: "く", kata: "ク", romaji: "ku", audio: "https://assets.codepen.io/4403884/ku.mp3" },
+    { hira: "け", kata: "ケ", romaji: "ke", audio: "https://assets.codepen.io/4403884/ke.mp3" },
+    { hira: "こ", kata: "コ", romaji: "ko", audio: "https://assets.codepen.io/4403884/ko.mp3" },
+    { hira: "さ", kata: "サ", romaji: "sa", audio: "https://assets.codepen.io/4403884/sa.mp3" },
+    { hira: "し", kata: "シ", romaji: "shi", audio: "https://assets.codepen.io/4403884/shi.mp3" },
+    { hira: "す", kata: "ス", romaji: "su", audio: "https://assets.codepen.io/4403884/su.mp3" },
+    { hira: "せ", kata: "セ", romaji: "se", audio: "https://assets.codepen.io/4403884/se.mp3" },
+    { hira: "そ", kata: "ソ", romaji: "so", audio: "https://assets.codepen.io/4403884/so.mp3" },
+    { hira: "た", kata: "タ", romaji: "ta", audio: "https://assets.codepen.io/4403884/ta.mp3" },
+    { hira: "ち", kata: "チ", romaji: "chi", audio: "https://assets.codepen.io/4403884/chi.mp3" },
+    { hira: "つ", kata: "ツ", romaji: "tsu", audio: "https://assets.codepen.io/4403884/tsu.mp3" },
+    { hira: "て", kata: "テ", romaji: "te", audio: "https://assets.codepen.io/4403884/te.mp3" },
+    { hira: "と", kata: "ト", romaji: "to", audio: "https://assets.codepen.io/4403884/to.mp3" },
+    { hira: "な", kata: "ナ", romaji: "na", audio: "https://assets.codepen.io/4403884/na.mp3" },
+    { hira: "に", kata: "ニ", romaji: "ni", audio: "https://assets.codepen.io/4403884/ni.mp3" },
+    { hira: "ぬ", kata: "ヌ", romaji: "nu", audio: "https://assets.codepen.io/4403884/nu.mp3" },
+    { hira: "ね", kata: "ネ", romaji: "ne", audio: "https://assets.codepen.io/4403884/ne.mp3" },
+    { hira: "の", kata: "ノ", romaji: "no", audio: "https://assets.codepen.io/4403884/no.mp3" },
+    { hira: "は", kata: "ハ", romaji: "ha", audio: "https://assets.codepen.io/4403884/ha.mp3" },
+    { hira: "ひ", kata: "ヒ", romaji: "hi", audio: "https://assets.codepen.io/4403884/hi.mp3" },
+    { hira: "ふ", kata: "フ", romaji: "fu", audio: "https://assets.codepen.io/4403884/fu.mp3" },
+    { hira: "へ", kata: "ヘ", romaji: "he", audio: "https://assets.codepen.io/4403884/he.mp3" },
+    { hira: "ほ", kata: "ホ", romaji: "ho", audio: "https://assets.codepen.io/4403884/ho.mp3" },
+    { hira: "ま", kata: "マ", romaji: "ma", audio: "https://assets.codepen.io/4403884/ma.mp3" },
+    { hira: "み", kata: "ミ", romaji: "mi", audio: "https://assets.codepen.io/4403884/mi.mp3" },
+    { hira: "む", kata: "ム", romaji: "mu", audio: "https://assets.codepen.io/4403884/mu.mp3" },
+    { hira: "め", kata: "メ", romaji: "me", audio: "https://assets.codepen.io/4403884/me.mp3" },
+    { hira: "も", kata: "モ", romaji: "mo", audio: "https://assets.codepen.io/4403884/mo.mp3" },
+    { hira: "や", kata: "ヤ", romaji: "ya", audio: "https://assets.codepen.io/4403884/ya.mp3" },
+    { hira: "ゆ", kata: "ユ", romaji: "yu", audio: "https://assets.codepen.io/4403884/yu.mp3" },
+    { hira: "よ", kata: "ヨ", romaji: "yo", audio: "https://assets.codepen.io/4403884/yo.mp3" },
+    { hira: "ら", kata: "ラ", romaji: "ra", audio: "https://assets.codepen.io/4403884/ra.mp3" },
+    { hira: "り", kata: "リ", romaji: "ri", audio: "https://assets.codepen.io/4403884/ri.mp3" },
+    { hira: "る", kata: "ル", romaji: "ru", audio: "https://assets.codepen.io/4403884/ru.mp3" },
+    { hira: "れ", kata: "レ", romaji: "re", audio: "https://assets.codepen.io/4403884/re.mp3" },
+    { hira: "ろ", kata: "ロ", romaji: "ro", audio: "https://assets.codepen.io/4403884/ro.mp3" },
+    { hira: "わ", kata: "ワ", romaji: "wa", audio: "https://assets.codepen.io/4403884/wa.mp3" },
+    { hira: "を", kata: "ヲ", romaji: "wo", audio: "https://assets.codepen.io/4403884/wo.mp3" },
+    { hira: "ん", kata: "ン", romaji: "n", audio: "https://assets.codepen.io/4403884/n.mp3" },
+    // 濁音
+    { hira: "が", kata: "ガ", romaji: "ga", audio: "https://assets.codepen.io/4403884/ga.mp3" },
+    { hira: "ぎ", kata: "ギ", romaji: "gi", audio: "https://assets.codepen.io/4403884/gi.mp3" },
+    { hira: "ぐ", kata: "グ", romaji: "gu", audio: "https://assets.codepen.io/4403884/gu.mp3" },
+    { hira: "げ", kata: "ゲ", romaji: "ge", audio: "https://assets.codepen.io/4403884/ge.mp3" },
+    { hira: "ご", kata: "ゴ", romaji: "go", audio: "https://assets.codepen.io/4403884/go.mp3" },
+    { hira: "ざ", kata: "ザ", romaji: "za", audio: "https://assets.codepen.io/4403884/za.mp3" },
+    { hira: "じ", kata: "ジ", romaji: "ji", audio: "https://assets.codepen.io/4403884/ji.mp3" },
+    { hira: "ず", kata: "ズ", romaji: "zu", audio: "https://assets.codepen.io/4403884/zu.mp3" },
+    { hira: "ぜ", kata: "ゼ", romaji: "ze", audio: "https://assets.codepen.io/4403884/ze.mp3" },
+    { hira: "ぞ", kata: "ゾ", romaji: "zo", audio: "https://assets.codepen.io/4403884/zo.mp3" },
+    { hira: "だ", kata: "ダ", romaji: "da", audio: "https://assets.codepen.io/4403884/da.mp3" },
+    { hira: "ぢ", kata: "ヂ", romaji: "ji", audio: "https://assets.codepen.io/4403884/ji2.mp3" },
+    { hira: "づ", kata: "ヅ", romaji: "zu", audio: "https://assets.codepen.io/4403884/zu2.mp3" },
+    { hira: "で", kata: "デ", romaji: "de", audio: "https://assets.codepen.io/4403884/de.mp3" },
+    { hira: "ど", kata: "ド", romaji: "do", audio: "https://assets.codepen.io/4403884/do.mp3" },
+    { hira: "ば", kata: "バ", romaji: "ba", audio: "https://assets.codepen.io/4403884/ba.mp3" },
+    { hira: "び", kata: "ビ", romaji: "bi", audio: "https://assets.codepen.io/4403884/bi.mp3" },
+    { hira: "ぶ", kata: "ブ", romaji: "bu", audio: "https://assets.codepen.io/4403884/bu.mp3" },
+    { hira: "べ", kata: "ベ", romaji: "be", audio: "https://assets.codepen.io/4403884/be.mp3" },
+    { hira: "ぼ", kata: "ボ", romaji: "bo", audio: "https://assets.codepen.io/4403884/bo.mp3" },
+    // 半濁音
+    { hira: "ぱ", kata: "パ", romaji: "pa", audio: "https://assets.codepen.io/4403884/pa.mp3" },
+    { hira: "ぴ", kata: "ピ", romaji: "pi", audio: "https://assets.codepen.io/4403884/pi.mp3" },
+    { hira: "ぷ", kata: "プ", romaji: "pu", audio: "https://assets.codepen.io/4403884/pu.mp3" },
+    { hira: "ぺ", kata: "ペ", romaji: "pe", audio: "https://assets.codepen.io/4403884/pe.mp3" },
+    { hira: "ぽ", kata: "ポ", romaji: "po", audio: "https://assets.codepen.io/4403884/po.mp3" },
+    // 拗音（部分）
+    { hira: "きゃ", kata: "キャ", romaji: "kya", audio: "https://assets.codepen.io/4403884/kya.mp3" },
+    { hira: "きゅ", kata: "キュ", romaji: "kyu", audio: "https://assets.codepen.io/4403884/kyu.mp3" },
+    { hira: "きょ", kata: "キョ", romaji: "kyo", audio: "https://assets.codepen.io/4403884/kyo.mp3" },
+    { hira: "しゃ", kata: "シャ", romaji: "sha", audio: "https://assets.codepen.io/4403884/sha.mp3" },
+    { hira: "しゅ", kata: "シュ", romaji: "shu", audio: "https://assets.codepen.io/4403884/shu.mp3" },
+    { hira: "しょ", kata: "ショ", romaji: "sho", audio: "https://assets.codepen.io/4403884/sho.mp3" },
+    { hira: "ちゃ", kata: "チャ", romaji: "cha", audio: "https://assets.codepen.io/4403884/cha.mp3" },
+    { hira: "ちゅ", kata: "チュ", romaji: "chu", audio: "https://assets.codepen.io/4403884/chu.mp3" },
+    { hira: "ちょ", kata: "チョ", romaji: "cho", audio: "https://assets.codepen.io/4403884/cho.mp3" },
+    { hira: "にゃ", kata: "ニャ", romaji: "nya", audio: "https://assets.codepen.io/4403884/nya.mp3" },
+    { hira: "にゅ", kata: "ニュ", romaji: "nyu", audio: "https://assets.codepen.io/4403884/nyu.mp3" },
+    { hira: "にょ", kata: "ニョ", romaji: "nyo", audio: "https://assets.codepen.io/4403884/nyo.mp3" },
+    { hira: "ひゃ", kata: "ヒャ", romaji: "hya", audio: "https://assets.codepen.io/4403884/hya.mp3" },
+    { hira: "ひゅ", kata: "ヒュ", romaji: "hyu", audio: "https://assets.codepen.io/4403884/hyu.mp3" },
+    { hira: "ひょ", kata: "ヒョ", romaji: "hyo", audio: "https://assets.codepen.io/4403884/hyo.mp3" },
+    { hira: "みゃ", kata: "ミャ", romaji: "mya", audio: "https://assets.codepen.io/4403884/mya.mp3" },
+    { hira: "みゅ", kata: "ミュ", romaji: "myu", audio: "https://assets.codepen.io/4403884/myu.mp3" },
+    { hira: "みょ", kata: "ミョ", romaji: "myo", audio: "https://assets.codepen.io/4403884/myo.mp3" },
+    { hira: "りゃ", kata: "リャ", romaji: "rya", audio: "https://assets.codepen.io/4403884/rya.mp3" },
+    { hira: "りゅ", kata: "リュ", romaji: "ryu", audio: "https://assets.codepen.io/4403884/ryu.mp3" },
+    { hira: "りょ", kata: "リョ", romaji: "ryo", audio: "https://assets.codepen.io/4403884/ryo.mp3" }
+  ];
+
+  let wrongList = [];
+  let currentIndex = -1;
+  let currentType = "hira";
+  let score = 0;
+  let timer = 30;
+  let timerId = null;
+
+  const kanaDisplay = document.getElementById("kanaDisplay");
+  const hintDisplay = document.getElementById("hintDisplay");
+  const inputRomaji = document.getElementById("inputRomaji");
+  const result = document.getElementById("result");
+  const scoreTimer = document.getElementById("scoreTimer");
+  const hintBtn = document.getElementById("hintBtn");
+  const checkBtn = document.getElementById("checkBtn");
+  const playSoundBtn = document.getElementById("playSoundBtn");
+
+  function getNextIndex() {
+    if (wrongList.length > 0) {
+      const randWrong = Math.floor(Math.random() * wrongList.length);
+      return wrongList[randWrong];
+    } else {
+      return Math.floor(Math.random() * gojuon.length);
     }
+  }
 
-    function checkAnswer() {
-      const input = document
-        .getElementById("inputRomaji")
-        .value.trim()
-        .toLowerCase();
-      const correct = gojuon[currentIndex].romaji;
+  function updateScoreTimer() {
+    scoreTimer.textContent = `分數：${score} | 剩餘時間：${timer}秒`;
+  }
 
-      if (input === correct) {
-        document.getElementById("result").textContent = "答對了！🎉";
-        setTimeout(newQuestion, 1000);
-      } else {
-        document.getElementById("result").textContent = `答錯了，再試一次。正確答案是：${correct}`;
+  function resetTimer() {
+    if (timerId) clearInterval(timerId);
+    timer = 30;
+    updateScoreTimer();
+    timerId = setInterval(() => {
+      timer--;
+      updateScoreTimer();
+      if (timer <= 0) {
+        clearInterval(timerId);
+        result.textContent = "時間到！自動換題，扣1分";
+        score = Math.max(0, score - 1);
+        updateScoreTimer();
+        addToWrongList(currentIndex);
+        setTimeout(newQuestion, 1500);
       }
+    }, 1000);
+  }
+
+  function addToWrongList(idx) {
+    if (!wrongList.includes(idx)) {
+      wrongList.push(idx);
     }
+  }
 
-    document.getElementById("checkBtn").addEventListener("click", checkAnswer);
+  function removeFromWrongList(idx) {
+    wrongList = wrongList.filter(i => i !== idx);
+  }
 
-    // Enter鍵也能提交
-    document
-      .getElementById("inputRomaji")
-      .addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-          checkAnswer();
-        }
-      });
+  function newQuestion() {
+    currentIndex = getNextIndex();
+    currentType = Math.random() < 0.5 ? "hira" : "kata";
+    kanaDisplay.textContent = gojuon[currentIndex][currentType];
+    hintDisplay.textContent = "";
+    inputRomaji.value = "";
+    result.textContent = "";
+    inputRomaji.focus();
+    resetTimer();
+  }
 
-    // 初始化第一題
-    newQuestion();
-  </script>
+  hintBtn.addEventListener("click", () => {
+    const hintType = currentType === "hira" ? "kata" : "hira";
+    hintDisplay.textContent = gojuon[currentIndex][hintType];
+  });
+
+  checkBtn.addEventListener("click", () => {
+    const input = inputRomaji.value.trim().toLowerCase();
+    const correct = gojuon[currentIndex].romaji;
+    if (input === correct) {
+      result.textContent = "答對了！🎉";
+      score++;
+      updateScoreTimer();
+      removeFromWrongList(currentIndex);
+      clearInterval(timerId);
+      setTimeout(newQuestion, 1000);
+    } else {
+      result.textContent = "答錯了，再試一次。";
+      addToWrongList(currentIndex);
+    }
+  });
+
+  inputRomaji.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      checkBtn.click();
+    }
+  });
+
+  playSoundBtn.addEventListener("click", () => {
+    const audioSrc = gojuon[currentIndex].audio;
+    if (!audioSrc) return;
+    const audio = new Audio(audioSrc);
+    audio.play();
+  });
+
+  newQuestion();
+</script>
 </body>
 </html>
