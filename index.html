@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>進階五十音練習機</title>
+<title>進階五十音練習機（含學習進度分析）</title>
 <style>
   body {
     font-family: "M PLUS 1", sans-serif, "微軟正黑體", "Microsoft JhengHei", sans-serif;
@@ -14,7 +14,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     user-select: none;
   }
   h1 {
@@ -83,6 +83,14 @@
     margin-bottom: 1rem;
     user-select: none;
   }
+  #progressSummary {
+    margin-top: 1rem;
+    font-size: 1rem;
+    color: #a7cfff;
+    user-select: none;
+    max-width: 90vw;
+    text-align: center;
+  }
   footer {
     position: fixed;
     bottom: 0;
@@ -97,12 +105,13 @@
 </style>
 </head>
 <body>
-<h1>進階五十音練習機</h1>
+<h1>進階五十音練習機（含學習進度分析）</h1>
 
 <div id="kanaDisplay">あ</div>
 <div id="controls">
   <button id="hintBtn">顯示提示（片假名/平假名）</button>
   <button id="playSoundBtn">播放發音 🔊</button>
+  <button id="skipBtn">跳過</button>
 </div>
 <div id="hintDisplay"></div>
 
@@ -119,12 +128,11 @@
 
 <div id="result"></div>
 <div id="scoreTimer">分數：0 | 剩餘時間：30秒</div>
+<div id="progressSummary">整體答題正確率：0%</div>
 
-<footer>參考自「時雨の町」五十音練習機，加入濁音、半濁音、拗音與音檔播放</footer>
+<footer>參考自「時雨の町」五十音練習機，加入濁音、半濁音、拗音與音檔播放及學習進度分析</footer>
 
 <script>
-  // 五十音資料（平假名、片假名、羅馬拼音、語音檔URL）
-  // 語音檔可自行替換成你準備的音檔URL，這裡用示意URL
   const gojuon = [
     { hira: "あ", kata: "ア", romaji: "a", audio: "https://assets.codepen.io/4403884/a.mp3" },
     { hira: "い", kata: "イ", romaji: "i", audio: "https://assets.codepen.io/4403884/i.mp3" },
@@ -235,17 +243,50 @@
   const inputRomaji = document.getElementById("inputRomaji");
   const result = document.getElementById("result");
   const scoreTimer = document.getElementById("scoreTimer");
+  const progressSummary = document.getElementById("progressSummary");
   const hintBtn = document.getElementById("hintBtn");
   const checkBtn = document.getElementById("checkBtn");
   const playSoundBtn = document.getElementById("playSoundBtn");
+  const skipBtn = document.getElementById("skipBtn");
 
-  function getNextIndex() {
-    if (wrongList.length > 0) {
-      const randWrong = Math.floor(Math.random() * wrongList.length);
-      return wrongList[randWrong];
-    } else {
-      return Math.floor(Math.random() * gojuon.length);
+  // 學習進度資料結構，從 localStorage 載入或初始化
+  function loadProgress() {
+    const data = localStorage.getItem("gojuonProgress");
+    return data ? JSON.parse(data) : {};
+  }
+  function saveProgress(progress) {
+    localStorage.setItem("gojuonProgress", JSON.stringify(progress));
+  }
+
+  // 更新答題進度資料
+  function updateProgress(questionId, isCorrect) {
+    const progress = loadProgress();
+    if (!progress[questionId]) {
+      progress[questionId] = { attempts: 0, corrects: 0 };
     }
+    progress[questionId].attempts++;
+    if (isCorrect) {
+      progress[questionId].corrects++;
+    }
+    saveProgress(progress);
+  }
+
+  // 計算整體正確率百分比
+  function calculateOverallAccuracy() {
+    const progress = loadProgress();
+    let totalAttempts = 0;
+    let totalCorrects = 0;
+    for (const key in progress) {
+      totalAttempts += progress[key].attempts;
+      totalCorrects += progress[key].corrects;
+    }
+    return totalAttempts === 0 ? 0 : (totalCorrects / totalAttempts) * 100;
+  }
+
+  // 顯示整體學習進度
+  function updateProgressDisplay() {
+    const accuracy = calculateOverallAccuracy();
+    progressSummary.textContent = `整體答題正確率：${accuracy.toFixed(1)}%`;
   }
 
   function updateScoreTimer() {
@@ -261,10 +302,14 @@
       updateScoreTimer();
       if (timer <= 0) {
         clearInterval(timerId);
+        result.style.color = "#f44336"; // 紅色
+        result.style.fontWeight = "bold";
         result.textContent = "時間到！自動換題，扣1分";
         score = Math.max(0, score - 1);
         updateScoreTimer();
         addToWrongList(currentIndex);
+        updateProgress(currentIndex, false);
+        updateProgressDisplay();
         setTimeout(newQuestion, 1500);
       }
     }, 1000);
@@ -280,6 +325,28 @@
     wrongList = wrongList.filter(i => i !== idx);
   }
 
+  function getNextIndex() {
+    if (wrongList.length > 0) {
+      const weight = 10;
+      const totalWeight = wrongList.length * weight + (gojuon.length - wrongList.length);
+      const rand = Math.random() * totalWeight;
+      if (rand < wrongList.length * weight) {
+        const randWrong = Math.floor(Math.random() * wrongList.length);
+        return wrongList[randWrong];
+      } else {
+        let normalIndices = [];
+        for (let i = 0; i < gojuon.length; i++) {
+          if (!wrongList.includes(i)) normalIndices.push(i);
+        }
+        if (normalIndices.length === 0) return wrongList[Math.floor(Math.random() * wrongList.length)];
+        const randNormal = Math.floor(Math.random() * normalIndices.length);
+        return normalIndices[randNormal];
+      }
+    } else {
+      return Math.floor(Math.random() * gojuon.length);
+    }
+  }
+
   function newQuestion() {
     currentIndex = getNextIndex();
     currentType = Math.random() < 0.5 ? "hira" : "kata";
@@ -287,6 +354,8 @@
     hintDisplay.textContent = "";
     inputRomaji.value = "";
     result.textContent = "";
+    result.style.color = "#ccc";
+    result.style.fontWeight = "normal";
     inputRomaji.focus();
     resetTimer();
   }
@@ -301,14 +370,25 @@
     const correct = gojuon[currentIndex].romaji;
     if (input === correct) {
       result.textContent = "答對了！🎉";
+      result.style.color = "#4CAF50"; // 綠色
+      result.style.fontWeight = "bold";
+      result.style.textShadow = "1px 1px 2px #000";
       score++;
       updateScoreTimer();
       removeFromWrongList(currentIndex);
+      updateProgress(currentIndex, true);
+      updateProgressDisplay();
       clearInterval(timerId);
       setTimeout(newQuestion, 1000);
     } else {
-      result.textContent = "答錯了，再試一次。";
+      result.textContent = `答錯了，正確答案是：${correct}，扣1分，再試一次。`;
+      result.style.color = "#f44336"; // 紅色
+      result.style.fontWeight = "bold";
+      score = Math.max(0, score - 1);
+      updateScoreTimer();
       addToWrongList(currentIndex);
+      updateProgress(currentIndex, false);
+      updateProgressDisplay();
     }
   });
 
@@ -325,6 +405,18 @@
     audio.play();
   });
 
+  skipBtn.addEventListener("click", () => {
+    clearInterval(timerId);
+    score = Math.max(0, score - 1);
+    updateScoreTimer();
+    addToWrongList(currentIndex);
+    updateProgress(currentIndex, false);
+    updateProgressDisplay();
+    newQuestion();
+  });
+
+  // 初始化
+  updateProgressDisplay();
   newQuestion();
 </script>
 </body>
