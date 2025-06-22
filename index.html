@@ -1,421 +1,668 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>進階五十音練習機（含學習進度分析）</title>
-<style>
-  body {
-    font-family: "M PLUS 1", sans-serif, "微軟正黑體", "Microsoft JhengHei", sans-serif;
-    background-color: #4f4f4f;
-    color: #ccc;
-    margin: 0; padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    user-select: none;
-  }
-  h1 {
-    margin-bottom: 1rem;
-    color: #6fbbff;
-    text-shadow: 1px 1px 2px #000;
-  }
-  #kanaDisplay {
-    font-size: 8rem;
-    margin-bottom: 0.5rem;
-    text-shadow: 2px 2px 4px #000;
-    user-select: text;
-  }
-  #controls {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    border: none;
-    background-color: #66acff;
-    color: white;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background-color: #4a8de0;
-  }
-  #hintDisplay {
-    font-size: 3rem;
-    color: #a7cfff;
-    margin-bottom: 1rem;
-    min-height: 3.5rem;
-    user-select: text;
-  }
-  #inputRomaji {
-    font-size: 2rem;
-    padding: 0.5rem 1rem;
-    width: 200px;
-    border: none;
-    border-radius: 5px;
-    outline: none;
-    text-align: center;
-    margin-bottom: 1rem;
-    background: rgba(255 255 255 / 0.1);
-    color: #eee;
-  }
-  #inputRomaji:focus {
-    background: rgba(103, 201, 255, 0.2);
-    color: #000;
-  }
-  #result {
-    margin-top: 1rem;
-    font-size: 1.5rem;
-    min-height: 2rem;
-    font-weight: 600;
-    text-shadow: 1px 1px 2px #000;
-    user-select: none;
-  }
-  #scoreTimer {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    user-select: none;
-  }
-  #progressSummary {
-    margin-top: 1rem;
-    font-size: 1rem;
-    color: #a7cfff;
-    user-select: none;
-    max-width: 90vw;
-    text-align: center;
-  }
-  footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    padding: 0.5rem 0;
-    font-size: 0.9rem;
-    color: #777;
-    background: #2a2a2a;
-    user-select: none;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信用卡推薦助手 - 找到最適合您的信用卡</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .progress-container {
+            background: #e0e0e0;
+            height: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .question-container {
+            padding: 30px;
+            min-height: 350px;
+        }
+        
+        .question {
+            margin-bottom: 30px;
+        }
+        
+        .question h3 {
+            font-size: 1.4rem;
+            color: #1a2980;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question h3 i {
+            margin-right: 10px;
+            color: #26d0ce;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .option {
+            background: #f5f9ff;
+            border: 2px solid #d0e4ff;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: #e1edff;
+            border-color: #1a2980;
+            transform: translateY(-3px);
+        }
+        
+        .option.selected {
+            background: #d0e4ff;
+            border-color: #1a2980;
+            box-shadow: 0 5px 15px rgba(26, 41, 128, 0.2);
+        }
+        
+        .option i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: #1a2980;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 30px;
+            background: #f8f9ff;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-prev {
+            background: #f1f1f1;
+            color: #555;
+        }
+        
+        .btn-prev:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-next {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+        }
+        
+        .btn-next:hover {
+            background: linear-gradient(to right, #15216d, #1fbdb8);
+            box-shadow: 0 5px 15px rgba(26, 41, 128, 0.4);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background: linear-gradient(to right, #009982, #7db32e);
+            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
+        }
+        
+        .result-container {
+            padding: 40px;
+            text-align: center;
+            display: none;
+        }
+        
+        .result-header {
+            color: #1a2980;
+            margin-bottom: 25px;
+        }
+        
+        .result-header i {
+            font-size: 4rem;
+            color: #00b09b;
+            margin-bottom: 15px;
+        }
+        
+        .card-recommendation {
+            background: linear-gradient(to right, #f5f9ff, #e1edff);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px auto;
+            max-width: 500px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            border-left: 5px solid #1a2980;
+        }
+        
+        .card-title {
+            font-size: 1.8rem;
+            color: #1a2980;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            color: #26d0ce;
+        }
+        
+        .card-benefits {
+            margin: 20px 0;
+        }
+        
+        .benefit-item {
+            display: flex;
+            margin-bottom: 12px;
+        }
+        
+        .benefit-item i {
+            color: #00b09b;
+            margin-right: 10px;
+            min-width: 24px;
+        }
+        
+        .apply-btn {
+            background: linear-gradient(to right, #ff8c00, #ff5500);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .apply-btn:hover {
+            background: linear-gradient(to right, #e67e00, #e64d00);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.4);
+        }
+        
+        .restart-btn {
+            background: #1a2980;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            background: #15216d;
+        }
+        
+        .footer {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .question-container, .result-container {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>進階五十音練習機（含學習進度分析）</h1>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-credit-card"></i> 信用卡推薦助手</h1>
+            <p>只需回答6條問題，我們將為您推薦最適合的信用卡</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="question-container" id="questionContainer">
+            <!-- Questions will be dynamically inserted here -->
+        </div>
+        
+        <div class="button-container">
+            <button class="btn btn-prev" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> 上一題</button>
+            <button class="btn btn-next" id="nextBtn">下一題 <i class="fas fa-arrow-right"></i></button>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="result-header">
+                <i class="fas fa-medal"></i>
+                <h2>為您推薦的最佳信用卡</h2>
+                <p>根據您的消費習慣和偏好，我們為您推薦以下信用卡：</p>
+            </div>
+            
+            <div class="card-recommendation" id="recommendedCard">
+                <!-- Recommendation will be inserted here -->
+            </div>
+            
+            <button class="restart-btn" id="restartBtn"><i class="fas fa-redo"></i> 重新開始</button>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2023 信用卡推薦助手 | 為您找到最合適的信用卡</p>
+    </div>
 
-<div id="kanaDisplay">あ</div>
-<div id="controls">
-  <button id="hintBtn">顯示提示（片假名/平假名）</button>
-  <button id="playSoundBtn">播放發音 🔊</button>
-  <button id="skipBtn">跳過</button>
-</div>
-<div id="hintDisplay"></div>
+    <script>
+        // Questions data
+        const questions = [
+            {
+                id: 1,
+                text: "您係「現金回贈」定「飛行里數」派？",
+                icon: "fas fa-money-bill-wave",
+                options: [
+                    { id: "cash", text: "現金回贈派", icon: "fas fa-coins", description: "喜歡直接獲得現金回贈" },
+                    { id: "miles", text: "飛行里數派", icon: "fas fa-plane", description: "喜歡累積飛行里數兌換機票" }
+                ]
+            },
+            {
+                id: 2,
+                text: "您每月平均信用卡消費金額係？",
+                icon: "fas fa-shopping-cart",
+                options: [
+                    { id: "low", text: "少於 HKD 5,000", icon: "fas fa-wallet", description: "每月消費低於5,000元" },
+                    { id: "medium", text: "HKD 5,000 - 15,000", icon: "fas fa-credit-card", description: "每月消費5,000-15,000元" },
+                    { id: "high", text: "HKD 15,000 - 30,000", icon: "fas fa-chart-line", description: "每月消費15,000-30,000元" },
+                    { id: "vhigh", text: "多於 HKD 30,000", icon: "fas fa-gem", description: "每月消費超過30,000元" }
+                ]
+            },
+            {
+                id: 3,
+                text: "您最高消費嘅 3 個類別係？",
+                icon: "fas fa-list",
+                options: [
+                    { id: "dining", text: "餐飲美食", icon: "fas fa-utensils", description: "餐廳、咖啡店等飲食消費" },
+                    { id: "groceries", text: "超市雜貨", icon: "fas fa-shopping-basket", description: "超市、日常用品購物" },
+                    { id: "travel", text: "旅遊消費", icon: "fas fa-suitcase-rolling", description: "機票、酒店、旅行團等" },
+                    { id: "online", text: "網上購物", icon: "fas fa-laptop", description: "網購、電子商務消費" },
+                    { id: "transport", text: "交通汽油", icon: "fas fa-gas-pump", description: "公共交通、汽油、的士等" },
+                    { id: "entertainment", text: "娛樂消遣", icon: "fas fa-film", description: "電影、演唱會、娛樂活動" }
+                ],
+                multiSelect: true
+            },
+            {
+                id: 4,
+                text: "您每年旅行次數？",
+                icon: "fas fa-globe-asia",
+                options: [
+                    { id: "never", text: "從不旅行", icon: "fas fa-home", description: "很少或從不旅行" },
+                    { id: "occasional", text: "1-2 次", icon: "fas fa-suitcase", description: "每年旅行1-2次" },
+                    { id: "frequent", text: "3-4 次", icon: "fas fa-passport", description: "每年旅行3-4次" },
+                    { id: "veryfrequent", text: "5+ 次", icon: "fas fa-plane-departure", description: "每年旅行5次或以上" }
+                ]
+            },
+            {
+                id: 5,
+                text: "您係咪願意支付年費換取更高回贈？",
+                icon: "fas fa-money-check-alt",
+                options: [
+                    { id: "yes", text: "願意支付", icon: "fas fa-check-circle", description: "願意支付年費獲得更佳優惠" },
+                    { id: "no", text: "不願支付", icon: "fas fa-times-circle", description: "偏好免年費信用卡" },
+                    { id: "depends", text: "視乎着數", icon: "fas fa-balance-scale", description: "根據優惠決定是否支付" }
+                ]
+            },
+            {
+                id: 6,
+                text: "您最重視邊種額外優惠？",
+                icon: "fas fa-gift",
+                options: [
+                    { id: "lounge", text: "機場貴賓室", icon: "fas fa-couch", description: "機場貴賓室使用權" },
+                    { id: "insurance", text: "旅遊保險", icon: "fas fa-shield-alt", description: "全面的旅遊保險保障" },
+                    { id: "dining", text: "餐飲優惠", icon: "fas fa-utensil-spoon", description: "餐廳折扣及餐飲禮遇" },
+                    { id: "installment", text: "免息分期", icon: "fas fa-calendar-alt", description: "免息分期付款計劃" }
+                ]
+            }
+        ];
 
-<input
-  type="text"
-  id="inputRomaji"
-  placeholder="請輸入羅馬拼音"
-  autocomplete="off"
-  autocorrect="off"
-  autocapitalize="off"
-  spellcheck="false"
-/>
-<button id="checkBtn">確認</button>
+        // Card recommendations
+        const cards = {
+            "cashLow": {
+                name: "Citi Cash Back Card",
+                description: "適合低消費的現金回贈愛好者",
+                benefits: [
+                    "2% 超市及餐飲現金回贈",
+                    "全年免年費",
+                    "新客戶首3個月5%現金回贈",
+                    "本地消費0.4%現金回贈"
+                ]
+            },
+            "cashHighGroceries": {
+                name: "HSBC Red Card",
+                description: "高消費者的超市及餐飲首選",
+                benefits: [
+                    "4% 超市及餐飲現金回贈",
+                    "全年免年費",
+                    "網上簽賬2%現金回贈",
+                    "其他本地簽賬1%現金回贈"
+                ]
+            },
+            "cashHighFee": {
+                name: "AMEX Platinum Cashback",
+                description: "高端消費者的頂級現金回贈卡",
+                benefits: [
+                    "5% 餐飲及網上購物現金回贈",
+                    "首年免年費",
+                    "機場貴賓室使用權",
+                    "高達HKD$1,500迎新現金回贈"
+                ]
+            },
+            "milesOccasional": {
+                name: "DBS Black World Mastercard",
+                description: "適合偶爾旅行的里數愛好者",
+                benefits: [
+                    "HKD$6 = 1 亞洲萬里通里數",
+                    "基本旅遊保險保障",
+                    "全年免年費",
+                    "網上簽賬額外里數獎賞"
+                ]
+            },
+            "milesFrequentLounge": {
+                name: "Standard Chartered Visa Infinite",
+                description: "常旅客尊享的頂級飛行卡",
+                benefits: [
+                    "HKD$3 = 1 飛行里數",
+                    "無限次機場貴賓室使用權",
+                    "全方位旅遊保險",
+                    "豪華酒店住宿優惠"
+                ]
+            },
+            "milesHighSpend": {
+                name: "HSBC Visa Signature",
+                description: "高消費旅客的尊貴里數卡",
+                benefits: [
+                    "海外簽賬HKD$1 = 4 飛行里數",
+                    "專享機場接送服務",
+                    "豪華旅遊保險保障",
+                    "高達100,000迎新里數"
+                ]
+            }
+        };
 
-<div id="result"></div>
-<div id="scoreTimer">分數：0 | 剩餘時間：30秒</div>
-<div id="progressSummary">整體答題正確率：0%</div>
+        // User answers storage
+        let userAnswers = {};
+        let currentQuestion = 0;
+        const maxQuestions = questions.length;
 
-<script>
-  const gojuon = [
-    { hira: "あ", kata: "ア", romaji: "a", audio: "https://assets.codepen.io/4403884/a.mp3" },
-    { hira: "い", kata: "イ", romaji: "i", audio: "https://assets.codepen.io/4403884/i.mp3" },
-    { hira: "う", kata: "ウ", romaji: "u", audio: "https://assets.codepen.io/4403884/u.mp3" },
-    { hira: "え", kata: "エ", romaji: "e", audio: "https://assets.codepen.io/4403884/e.mp3" },
-    { hira: "お", kata: "オ", romaji: "o", audio: "https://assets.codepen.io/4403884/o.mp3" },
-    { hira: "か", kata: "カ", romaji: "ka", audio: "https://assets.codepen.io/4403884/ka.mp3" },
-    { hira: "き", kata: "キ", romaji: "ki", audio: "https://assets.codepen.io/4403884/ki.mp3" },
-    { hira: "く", kata: "ク", romaji: "ku", audio: "https://assets.codepen.io/4403884/ku.mp3" },
-    { hira: "け", kata: "ケ", romaji: "ke", audio: "https://assets.codepen.io/4403884/ke.mp3" },
-    { hira: "こ", kata: "コ", romaji: "ko", audio: "https://assets.codepen.io/4403884/ko.mp3" },
-    { hira: "さ", kata: "サ", romaji: "sa", audio: "https://assets.codepen.io/4403884/sa.mp3" },
-    { hira: "し", kata: "シ", romaji: "shi", audio: "https://assets.codepen.io/4403884/shi.mp3" },
-    { hira: "す", kata: "ス", romaji: "su", audio: "https://assets.codepen.io/4403884/su.mp3" },
-    { hira: "せ", kata: "セ", romaji: "se", audio: "https://assets.codepen.io/4403884/se.mp3" },
-    { hira: "そ", kata: "ソ", romaji: "so", audio: "https://assets.codepen.io/4403884/so.mp3" },
-    { hira: "た", kata: "タ", romaji: "ta", audio: "https://assets.codepen.io/4403884/ta.mp3" },
-    { hira: "ち", kata: "チ", romaji: "chi", audio: "https://assets.codepen.io/4403884/chi.mp3" },
-    { hira: "つ", kata: "ツ", romaji: "tsu", audio: "https://assets.codepen.io/4403884/tsu.mp3" },
-    { hira: "て", kata: "テ", romaji: "te", audio: "https://assets.codepen.io/4403884/te.mp3" },
-    { hira: "と", kata: "ト", romaji: "to", audio: "https://assets.codepen.io/4403884/to.mp3" },
-    { hira: "な", kata: "ナ", romaji: "na", audio: "https://assets.codepen.io/4403884/na.mp3" },
-    { hira: "に", kata: "ニ", romaji: "ni", audio: "https://assets.codepen.io/4403884/ni.mp3" },
-    { hira: "ぬ", kata: "ヌ", romaji: "nu", audio: "https://assets.codepen.io/4403884/nu.mp3" },
-    { hira: "ね", kata: "ネ", romaji: "ne", audio: "https://assets.codepen.io/4403884/ne.mp3" },
-    { hira: "の", kata: "ノ", romaji: "no", audio: "https://assets.codepen.io/4403884/no.mp3" },
-    { hira: "は", kata: "ハ", romaji: "ha", audio: "https://assets.codepen.io/4403884/ha.mp3" },
-    { hira: "ひ", kata: "ヒ", romaji: "hi", audio: "https://assets.codepen.io/4403884/hi.mp3" },
-    { hira: "ふ", kata: "フ", romaji: "fu", audio: "https://assets.codepen.io/4403884/fu.mp3" },
-    { hira: "へ", kata: "ヘ", romaji: "he", audio: "https://assets.codepen.io/4403884/he.mp3" },
-    { hira: "ほ", kata: "ホ", romaji: "ho", audio: "https://assets.codepen.io/4403884/ho.mp3" },
-    { hira: "ま", kata: "マ", romaji: "ma", audio: "https://assets.codepen.io/4403884/ma.mp3" },
-    { hira: "み", kata: "ミ", romaji: "mi", audio: "https://assets.codepen.io/4403884/mi.mp3" },
-    { hira: "む", kata: "ム", romaji: "mu", audio: "https://assets.codepen.io/4403884/mu.mp3" },
-    { hira: "め", kata: "メ", romaji: "me", audio: "https://assets.codepen.io/4403884/me.mp3" },
-    { hira: "も", kata: "モ", romaji: "mo", audio: "https://assets.codepen.io/4403884/mo.mp3" },
-    { hira: "や", kata: "ヤ", romaji: "ya", audio: "https://assets.codepen.io/4403884/ya.mp3" },
-    { hira: "ゆ", kata: "ユ", romaji: "yu", audio: "https://assets.codepen.io/4403884/yu.mp3" },
-    { hira: "よ", kata: "ヨ", romaji: "yo", audio: "https://assets.codepen.io/4403884/yo.mp3" },
-    { hira: "ら", kata: "ラ", romaji: "ra", audio: "https://assets.codepen.io/4403884/ra.mp3" },
-    { hira: "り", kata: "リ", romaji: "ri", audio: "https://assets.codepen.io/4403884/ri.mp3" },
-    { hira: "る", kata: "ル", romaji: "ru", audio: "https://assets.codepen.io/4403884/ru.mp3" },
-    { hira: "れ", kata: "レ", romaji: "re", audio: "https://assets.codepen.io/4403884/re.mp3" },
-    { hira: "ろ", kata: "ロ", romaji: "ro", audio: "https://assets.codepen.io/4403884/ro.mp3" },
-    { hira: "わ", kata: "ワ", romaji: "wa", audio: "https://assets.codepen.io/4403884/wa.mp3" },
-    { hira: "を", kata: "ヲ", romaji: "wo", audio: "https://assets.codepen.io/4403884/wo.mp3" },
-    { hira: "ん", kata: "ン", romaji: "n", audio: "https://assets.codepen.io/4403884/n.mp3" },
-    // 濁音
-    { hira: "が", kata: "ガ", romaji: "ga", audio: "https://assets.codepen.io/4403884/ga.mp3" },
-    { hira: "ぎ", kata: "ギ", romaji: "gi", audio: "https://assets.codepen.io/4403884/gi.mp3" },
-    { hira: "ぐ", kata: "グ", romaji: "gu", audio: "https://assets.codepen.io/4403884/gu.mp3" },
-    { hira: "げ", kata: "ゲ", romaji: "ge", audio: "https://assets.codepen.io/4403884/ge.mp3" },
-    { hira: "ご", kata: "ゴ", romaji: "go", audio: "https://assets.codepen.io/4403884/go.mp3" },
-    { hira: "ざ", kata: "ザ", romaji: "za", audio: "https://assets.codepen.io/4403884/za.mp3" },
-    { hira: "じ", kata: "ジ", romaji: "ji", audio: "https://assets.codepen.io/4403884/ji.mp3" },
-    { hira: "ず", kata: "ズ", romaji: "zu", audio: "https://assets.codepen.io/4403884/zu.mp3" },
-    { hira: "ぜ", kata: "ゼ", romaji: "ze", audio: "https://assets.codepen.io/4403884/ze.mp3" },
-    { hira: "ぞ", kata: "ゾ", romaji: "zo", audio: "https://assets.codepen.io/4403884/zo.mp3" },
-    { hira: "だ", kata: "ダ", romaji: "da", audio: "https://assets.codepen.io/4403884/da.mp3" },
-    { hira: "ぢ", kata: "ヂ", romaji: "ji", audio: "https://assets.codepen.io/4403884/ji2.mp3" },
-    { hira: "づ", kata: "ヅ", romaji: "zu", audio: "https://assets.codepen.io/4403884/zu2.mp3" },
-    { hira: "で", kata: "デ", romaji: "de", audio: "https://assets.codepen.io/4403884/de.mp3" },
-    { hira: "ど", kata: "ド", romaji: "do", audio: "https://assets.codepen.io/4403884/do.mp3" },
-    { hira: "ば", kata: "バ", romaji: "ba", audio: "https://assets.codepen.io/4403884/ba.mp3" },
-    { hira: "び", kata: "ビ", romaji: "bi", audio: "https://assets.codepen.io/4403884/bi.mp3" },
-    { hira: "ぶ", kata: "ブ", romaji: "bu", audio: "https://assets.codepen.io/4403884/bu.mp3" },
-    { hira: "べ", kata: "ベ", romaji: "be", audio: "https://assets.codepen.io/4403884/be.mp3" },
-    { hira: "ぼ", kata: "ボ", romaji: "bo", audio: "https://assets.codepen.io/4403884/bo.mp3" },
-    // 半濁音
-    { hira: "ぱ", kata: "パ", romaji: "pa", audio: "https://assets.codepen.io/4403884/pa.mp3" },
-    { hira: "ぴ", kata: "ピ", romaji: "pi", audio: "https://assets.codepen.io/4403884/pi.mp3" },
-    { hira: "ぷ", kata: "プ", romaji: "pu", audio: "https://assets.codepen.io/4403884/pu.mp3" },
-    { hira: "ぺ", kata: "ペ", romaji: "pe", audio: "https://assets.codepen.io/4403884/pe.mp3" },
-    { hira: "ぽ", kata: "ポ", romaji: "po", audio: "https://assets.codepen.io/4403884/po.mp3" },
-    // 拗音（部分）
-    { hira: "きゃ", kata: "キャ", romaji: "kya", audio: "https://assets.codepen.io/4403884/kya.mp3" },
-    { hira: "きゅ", kata: "キュ", romaji: "kyu", audio: "https://assets.codepen.io/4403884/kyu.mp3" },
-    { hira: "きょ", kata: "キョ", romaji: "kyo", audio: "https://assets.codepen.io/4403884/kyo.mp3" },
-    { hira: "しゃ", kata: "シャ", romaji: "sha", audio: "https://assets.codepen.io/4403884/sha.mp3" },
-    { hira: "しゅ", kata: "シュ", romaji: "shu", audio: "https://assets.codepen.io/4403884/shu.mp3" },
-    { hira: "しょ", kata: "ショ", romaji: "sho", audio: "https://assets.codepen.io/4403884/sho.mp3" },
-    { hira: "ちゃ", kata: "チャ", romaji: "cha", audio: "https://assets.codepen.io/4403884/cha.mp3" },
-    { hira: "ちゅ", kata: "チュ", romaji: "chu", audio: "https://assets.codepen.io/4403884/chu.mp3" },
-    { hira: "ちょ", kata: "チョ", romaji: "cho", audio: "https://assets.codepen.io/4403884/cho.mp3" },
-    { hira: "にゃ", kata: "ニャ", romaji: "nya", audio: "https://assets.codepen.io/4403884/nya.mp3" },
-    { hira: "にゅ", kata: "ニュ", romaji: "nyu", audio: "https://assets.codepen.io/4403884/nyu.mp3" },
-    { hira: "にょ", kata: "ニョ", romaji: "nyo", audio: "https://assets.codepen.io/4403884/nyo.mp3" },
-    { hira: "ひゃ", kata: "ヒャ", romaji: "hya", audio: "https://assets.codepen.io/4403884/hya.mp3" },
-    { hira: "ひゅ", kata: "ヒュ", romaji: "hyu", audio: "https://assets.codepen.io/4403884/hyu.mp3" },
-    { hira: "ひょ", kata: "ヒョ", romaji: "hyo", audio: "https://assets.codepen.io/4403884/hyo.mp3" },
-    { hira: "みゃ", kata: "ミャ", romaji: "mya", audio: "https://assets.codepen.io/4403884/mya.mp3" },
-    { hira: "みゅ", kata: "ミュ", romaji: "myu", audio: "https://assets.codepen.io/4403884/myu.mp3" },
-    { hira: "みょ", kata: "ミョ", romaji: "myo", audio: "https://assets.codepen.io/4403884/myo.mp3" },
-    { hira: "りゃ", kata: "リャ", romaji: "rya", audio: "https://assets.codepen.io/4403884/rya.mp3" },
-    { hira: "りゅ", kata: "リュ", romaji: "ryu", audio: "https://assets.codepen.io/4403884/ryu.mp3" },
-    { hira: "りょ", kata: "リョ", romaji: "ryo", audio: "https://assets.codepen.io/4403884/ryo.mp3" }
-  ];
-
-  let wrongList = [];
-  let currentIndex = -1;
-  let currentType = "hira";
-  let score = 0;
-  let timer = 30;
-  let timerId = null;
-
-  const kanaDisplay = document.getElementById("kanaDisplay");
-  const hintDisplay = document.getElementById("hintDisplay");
-  const inputRomaji = document.getElementById("inputRomaji");
-  const result = document.getElementById("result");
-  const scoreTimer = document.getElementById("scoreTimer");
-  const progressSummary = document.getElementById("progressSummary");
-  const hintBtn = document.getElementById("hintBtn");
-  const checkBtn = document.getElementById("checkBtn");
-  const playSoundBtn = document.getElementById("playSoundBtn");
-  const skipBtn = document.getElementById("skipBtn");
-
-  // 學習進度資料結構，從 localStorage 載入或初始化
-  function loadProgress() {
-    const data = localStorage.getItem("gojuonProgress");
-    return data ? JSON.parse(data) : {};
-  }
-  function saveProgress(progress) {
-    localStorage.setItem("gojuonProgress", JSON.stringify(progress));
-  }
-
-  // 更新答題進度資料
-  function updateProgress(questionId, isCorrect) {
-    const progress = loadProgress();
-    if (!progress[questionId]) {
-      progress[questionId] = { attempts: 0, corrects: 0 };
-    }
-    progress[questionId].attempts++;
-    if (isCorrect) {
-      progress[questionId].corrects++;
-    }
-    saveProgress(progress);
-  }
-
-  // 計算整體正確率百分比
-  function calculateOverallAccuracy() {
-    const progress = loadProgress();
-    let totalAttempts = 0;
-    let totalCorrects = 0;
-    for (const key in progress) {
-      totalAttempts += progress[key].attempts;
-      totalCorrects += progress[key].corrects;
-    }
-    return totalAttempts === 0 ? 0 : (totalCorrects / totalAttempts) * 100;
-  }
-
-  // 顯示整體學習進度
-  function updateProgressDisplay() {
-    const accuracy = calculateOverallAccuracy();
-    progressSummary.textContent = `整體答題正確率：${accuracy.toFixed(1)}%`;
-  }
-
-  function updateScoreTimer() {
-    scoreTimer.textContent = `分數：${score} | 剩餘時間：${timer}秒`;
-  }
-
-  function resetTimer() {
-    if (timerId) clearInterval(timerId);
-    timer = 30;
-    updateScoreTimer();
-    timerId = setInterval(() => {
-      timer--;
-      updateScoreTimer();
-      if (timer <= 0) {
-        clearInterval(timerId);
-        result.style.color = "#f44336"; // 紅色
-        result.style.fontWeight = "bold";
-        result.textContent = "時間到！自動換題，扣1分";
-        score = Math.max(0, score - 1);
-        updateScoreTimer();
-        addToWrongList(currentIndex);
-        updateProgress(currentIndex, false);
-        updateProgressDisplay();
-        setTimeout(newQuestion, 1500);
-      }
-    }, 1000);
-  }
-
-  function addToWrongList(idx) {
-    if (!wrongList.includes(idx)) {
-      wrongList.push(idx);
-    }
-  }
-
-  function removeFromWrongList(idx) {
-    wrongList = wrongList.filter(i => i !== idx);
-  }
-
-  function getNextIndex() {
-    if (wrongList.length > 0) {
-      const weight = 10;
-      const totalWeight = wrongList.length * weight + (gojuon.length - wrongList.length);
-      const rand = Math.random() * totalWeight;
-      if (rand < wrongList.length * weight) {
-        const randWrong = Math.floor(Math.random() * wrongList.length);
-        return wrongList[randWrong];
-      } else {
-        let normalIndices = [];
-        for (let i = 0; i < gojuon.length; i++) {
-          if (!wrongList.includes(i)) normalIndices.push(i);
+        // Initialize the app
+        function init() {
+            showQuestion(currentQuestion);
+            updateProgressBar();
+            
+            // Event listeners
+            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+            document.getElementById('prevBtn').addEventListener('click', prevQuestion);
+            document.getElementById('restartBtn').addEventListener('click', restartQuiz);
         }
-        if (normalIndices.length === 0) return wrongList[Math.floor(Math.random() * wrongList.length)];
-        const randNormal = Math.floor(Math.random() * normalIndices.length);
-        return normalIndices[randNormal];
-      }
-    } else {
-      return Math.floor(Math.random() * gojuon.length);
-    }
-  }
 
-  function newQuestion() {
-    currentIndex = getNextIndex();
-    currentType = Math.random() < 0.5 ? "hira" : "kata";
-    kanaDisplay.textContent = gojuon[currentIndex][currentType];
-    hintDisplay.textContent = "";
-    inputRomaji.value = "";
-    result.textContent = "";
-    result.style.color = "#ccc";
-    result.style.fontWeight = "normal";
-    inputRomaji.focus();
-    resetTimer();
-  }
+        // Show current question
+        function showQuestion(index) {
+            const question = questions[index];
+            let optionsHTML = '';
+            
+            question.options.forEach(option => {
+                optionsHTML += `
+                    <div class="option" data-id="${option.id}">
+                        <i class="${option.icon}"></i>
+                        <div>
+                            <strong>${option.text}</strong>
+                            <p>${option.description}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const questionHTML = `
+                <div class="question">
+                    <h3><i class="${question.icon}"></i> ${question.text}</h3>
+                    <div class="options" id="optionsContainer">
+                        ${optionsHTML}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('questionContainer').innerHTML = questionHTML;
+            
+            // Add event listeners to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    // For multi-select questions
+                    if (question.multiSelect) {
+                        option.classList.toggle('selected');
+                    } else {
+                        // For single-select questions
+                        document.querySelectorAll('.option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        option.classList.add('selected');
+                        userAnswers[question.id] = option.dataset.id;
+                    }
+                });
+            });
+            
+            // Update button text for last question
+            if (index === maxQuestions - 1) {
+                document.getElementById('nextBtn').innerHTML = '查看結果 <i class="fas fa-check"></i>';
+                document.getElementById('nextBtn').classList.add('btn-submit');
+                document.getElementById('nextBtn').classList.remove('btn-next');
+            } else {
+                document.getElementById('nextBtn').innerHTML = '下一題 <i class="fas fa-arrow-right"></i>';
+                document.getElementById('nextBtn').classList.add('btn-next');
+                document.getElementById('nextBtn').classList.remove('btn-submit');
+            }
+            
+            // Update previous button state
+            document.getElementById('prevBtn').disabled = index === 0;
+        }
 
-  hintBtn.addEventListener("click", () => {
-    const hintType = currentType === "hira" ? "kata" : "hira";
-    hintDisplay.textContent = gojuon[currentIndex][hintType];
-  });
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestion) / maxQuestions) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
 
-  checkBtn.addEventListener("click", () => {
-    const input = inputRomaji.value.trim().toLowerCase();
-    const correct = gojuon[currentIndex].romaji;
-    if (input === correct) {
-      result.textContent = "答對了！🎉";
-      result.style.color = "#4CAF50"; // 綠色
-      result.style.fontWeight = "bold";
-      result.style.textShadow = "1px 1px 2px #000";
-      score++;
-      updateScoreTimer();
-      removeFromWrongList(currentIndex);
-      updateProgress(currentIndex, true);
-      updateProgressDisplay();
-      clearInterval(timerId);
-      setTimeout(newQuestion, 1000);
-    } else {
-      result.textContent = `答錯了，正確答案是：${correct}，扣1分，再試一次。`;
-      result.style.color = "#f44336"; // 紅色
-      result.style.fontWeight = "bold";
-      score = Math.max(0, score - 1);
-      updateScoreTimer();
-      addToWrongList(currentIndex);
-      updateProgress(currentIndex, false);
-      updateProgressDisplay();
-    }
-  });
+        // Next question
+        function nextQuestion() {
+            // For multi-select questions (question 3)
+            if (questions[currentQuestion].multiSelect) {
+                const selected = document.querySelectorAll('.option.selected');
+                if (selected.length === 0) {
+                    alert("請選擇至少一個消費類別");
+                    return;
+                }
+                
+                const selectedIds = Array.from(selected).map(el => el.dataset.id);
+                userAnswers[questions[currentQuestion].id] = selectedIds;
+            } 
+            // For other questions
+            else if (!userAnswers[questions[currentQuestion].id]) {
+                alert("請選擇一個答案");
+                return;
+            }
+            
+            // If last question, show results
+            if (currentQuestion === maxQuestions - 1) {
+                showResults();
+                return;
+            }
+            
+            currentQuestion++;
+            showQuestion(currentQuestion);
+            updateProgressBar();
+        }
 
-  inputRomaji.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      checkBtn.click();
-    }
-  });
+        // Previous question
+        function prevQuestion() {
+            currentQuestion--;
+            showQuestion(currentQuestion);
+            updateProgressBar();
+        }
 
-  playSoundBtn.addEventListener("click", () => {
-    const audioSrc = gojuon[currentIndex].audio;
-    if (!audioSrc) return;
-    const audio = new Audio(audioSrc);
-    audio.play();
-  });
+        // Show results
+        function showResults() {
+            // Hide question container and buttons
+            document.getElementById('questionContainer').style.display = 'none';
+            document.querySelector('.button-container').style.display = 'none';
+            
+            // Show result container
+            document.getElementById('resultContainer').style.display = 'block';
+            
+            // Determine recommended card
+            let cardKey = "";
+            
+            if (userAnswers[1] === "cash") {
+                if (userAnswers[2] === "low" || (userAnswers[2] === "medium" && userAnswers[5] === "no")) {
+                    cardKey = "cashLow";
+                } else if (["medium", "high", "vhigh"].includes(userAnswers[2]) && 
+                          userAnswers[3].includes("groceries") || userAnswers[3].includes("dining")) {
+                    cardKey = "cashHighGroceries";
+                } else if (["high", "vhigh"].includes(userAnswers[2]) && 
+                          (userAnswers[5] === "yes" || userAnswers[5] === "depends")) {
+                    cardKey = "cashHighFee";
+                } else {
+                    cardKey = "cashLow";
+                }
+            } else { // miles
+                if ((userAnswers[4] === "frequent" || userAnswers[4] === "veryfrequent") && 
+                    userAnswers[6] === "lounge") {
+                    cardKey = "milesFrequentLounge";
+                } else if (userAnswers[2] === "vhigh") {
+                    cardKey = "milesHighSpend";
+                } else {
+                    cardKey = "milesOccasional";
+                }
+            }
+            
+            const card = cards[cardKey];
+            
+            // Build benefits list
+            let benefitsHTML = "";
+            card.benefits.forEach(benefit => {
+                benefitsHTML += `
+                    <div class="benefit-item">
+                        <i class="fas fa-check-circle"></i>
+                        <div>${benefit}</div>
+                    </div>
+                `;
+            });
+            
+            // Display recommendation
+            const cardHTML = `
+                <h3 class="card-title"><i class="fas fa-crown"></i> ${card.name}</h3>
+                <p><strong>${card.description}</strong></p>
+                
+                <div class="card-benefits">
+                    <h4><i class="fas fa-star"></i> 主要優點：</h4>
+                    ${benefitsHTML}
+                </div>
+                
+                <button class="apply-btn"><i class="fas fa-arrow-right"></i> 立即申請</button>
+            `;
+            
+            document.getElementById('recommendedCard').innerHTML = cardHTML;
+        }
 
-  skipBtn.addEventListener("click", () => {
-    clearInterval(timerId);
-    score = Math.max(0, score - 1);
-    updateScoreTimer();
-    addToWrongList(currentIndex);
-    updateProgress(currentIndex, false);
-    updateProgressDisplay();
-    newQuestion();
-  });
+        // Restart quiz
+        function restartQuiz() {
+            userAnswers = {};
+            currentQuestion = 0;
+            
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('questionContainer').style.display = 'block';
+            document.querySelector('.button-container').style.display = 'flex';
+            
+            showQuestion(currentQuestion);
+            updateProgressBar();
+        }
 
-  // 初始化
-  updateProgressDisplay();
-  newQuestion();
-</script>
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
